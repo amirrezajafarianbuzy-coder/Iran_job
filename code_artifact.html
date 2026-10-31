@@ -1,0 +1,1791 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مرجع جامع مشاغل ایران و هوش مصنوعی رایگان (نسخه آرگون پرو)</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Vazirmatn Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Vazirmatn', 'sans-serif'],
+                    },
+                    colors: {
+                        slate: {
+                            50: '#F8FAFC',
+                            100: '#F1F5F9',
+                            200: '#E2E8F0',
+                            300: '#CBD5E1',
+                            400: '#94A3B8',
+                            500: '#64748B',
+                            600: '#475569',
+                            700: '#334155',
+                            800: '#1E293B',
+                            900: '#0F172A',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * {
+            font-family: 'Vazirmatn', sans-serif !important;
+        }
+        body {
+            background-color: #F8FAFC;
+            color: #0F172A;
+            overflow-x: hidden;
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #F1F5F9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #CBD5E1;
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94A3B8;
+        }
+        .argon-card {
+            transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .argon-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 14px 28px -8px rgba(15, 23, 42, 0.07), 0 6px 12px -4px rgba(15, 23, 42, 0.04);
+            border-color: #94A3B8;
+        }
+        .active-category {
+            background-color: #0F172A !important;
+            color: #FFFFFF !important;
+            border-color: #0F172A !important;
+        }
+        .active-category .cat-count {
+            background-color: #334155 !important;
+            color: #F8FAFC !important;
+        }
+        .active-category svg {
+            color: #FFFFFF !important;
+        }
+        .tool-chip {
+            transition: all 0.15s ease;
+        }
+        .tool-chip:hover {
+            background-color: #0F172A;
+            color: #FFFFFF;
+            border-color: #0F172A;
+        }
+        .tool-chip:hover .tool-desc {
+            color: #CBD5E1;
+        }
+        .tool-chip:hover .tool-icon {
+            color: #FFFFFF;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-slate-900 selection:text-white">
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-5 left-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none bg-slate-900 text-white px-4 py-3 rounded-xl shadow-xl flex items-center gap-2.5 text-sm font-medium border border-slate-700">
+        <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400 shrink-0"></i>
+        <span id="toast-message">پرامپت تخصصی با موفقیت کپی شد!</span>
+    </div>
+
+    <!-- Prompt Modal -->
+    <div id="prompt-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/50 backdrop-blur-xs p-4">
+        <div class="bg-white border border-slate-200 rounded-2xl max-w-xl w-full p-6 shadow-2xl transform transition-all">
+            <div class="flex items-start justify-between gap-3 pb-4 border-b border-slate-100">
+                <div>
+                    <span id="modal-category" class="text-[11px] font-bold px-2.5 py-0.5 rounded-md bg-slate-100 text-slate-700 border border-slate-200"></span>
+                    <h3 id="modal-title" class="text-lg font-extrabold text-slate-900 mt-1.5"></h3>
+                </div>
+                <button onclick="closePromptModal()" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <div class="my-4">
+                <div class="text-xs font-bold text-slate-700 mb-2 flex items-center justify-between">
+                    <span class="flex items-center gap-1.5">
+                        <i data-lucide="terminal" class="w-4 h-4 text-slate-600"></i>
+                        <span>پرامپت آماده و تست‌شده فارسی (مناسب ChatGPT / Claude / DeepSeek / Perplexity):</span>
+                    </span>
+                </div>
+                <div id="modal-prompt-text" class="bg-slate-50 border border-slate-200 rounded-xl p-4 text-xs sm:text-sm text-slate-800 leading-relaxed select-all font-medium"></div>
+            </div>
+
+            <div class="mb-5">
+                <div class="text-xs font-bold text-slate-600 mb-2">ابزارهای تخصصی رایگان این شغل (برای ورود کلیک کنید):</div>
+                <div id="modal-tools-list" class="grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
+            </div>
+
+            <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
+                <button onclick="closePromptModal()" class="px-4 py-2 rounded-xl border border-slate-200 text-slate-600 text-xs font-bold hover:bg-slate-50">
+                    بستن
+                </button>
+                <button id="modal-copy-btn" class="inline-flex items-center gap-1.5 px-5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-all shadow-sm">
+                    <i data-lucide="copy" class="w-4 h-4"></i>
+                    <span>کپی متن پرامپت</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Header -->
+    <header class="bg-white/95 backdrop-blur-md border-b border-slate-200 sticky top-0 z-30 shadow-xs">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                <!-- Brand & Title -->
+                <div class="flex items-start sm:items-center gap-3.5">
+                    <div class="w-12 h-12 rounded-2xl bg-slate-900 text-white flex items-center justify-center shrink-0 shadow-sm border border-slate-700">
+                        <i data-lucide="cpu" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <h1 class="text-lg sm:text-xl font-extrabold text-slate-900 tracking-tight">مرجع جامع مشاغل ایران و هوش مصنوعی رایگان</h1>
+                            <span class="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-slate-900 text-white">نسخه آرگون پرو</span>
+                        </div>
+                        <p class="text-xs sm:text-sm text-slate-500 mt-0.5">پوشش ۶۰ صنف واقعی (کاسبان بازار، مشاغل فنی، خدماتی و کسب‌وکارهای آنلاین) به همراه +۱۸۰ ابزار تخصصی رایگان</p>
+                    </div>
+                </div>
+
+                <!-- Live Metrics Badges -->
+                <div class="grid grid-cols-3 gap-2 sm:flex sm:items-center sm:gap-2.5 shrink-0">
+                    <div class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-center sm:text-right flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2.5">
+                        <div class="hidden sm:flex w-8 h-8 rounded-lg bg-white border border-slate-200 items-center justify-center text-slate-800">
+                            <i data-lucide="briefcase" class="w-4 h-4"></i>
+                        </div>
+                        <div>
+                            <div class="text-[10px] text-slate-500 font-medium">مشاغل کف بازار</div>
+                            <div class="text-xs sm:text-sm font-extrabold text-slate-900">۶۰ شغل واقعی</div>
+                        </div>
+                    </div>
+                    <div class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-center sm:text-right flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2.5">
+                        <div class="hidden sm:flex w-8 h-8 rounded-lg bg-white border border-slate-200 items-center justify-center text-slate-800">
+                            <i data-lucide="layers" class="w-4 h-4"></i>
+                        </div>
+                        <div>
+                            <div class="text-[10px] text-slate-500 font-medium">رسته‌های صنفی</div>
+                            <div class="text-xs sm:text-sm font-extrabold text-slate-900">۱۲ گروه کلان</div>
+                        </div>
+                    </div>
+                    <div class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-center sm:text-right flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2.5">
+                        <div class="hidden sm:flex w-8 h-8 rounded-lg bg-white border border-slate-200 items-center justify-center text-slate-800">
+                            <i data-lucide="sparkles" class="w-4 h-4"></i>
+                        </div>
+                        <div>
+                            <div class="text-[10px] text-slate-500 font-medium">بانک ابزارها</div>
+                            <div class="text-xs sm:text-sm font-extrabold text-slate-900">+۱۸۰ هوش مصنوعی</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Search, Business Model Filter & View Switcher -->
+            <div class="mt-4 pt-3 border-t border-slate-100 flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3">
+                <!-- Search Input -->
+                <div class="relative flex-1">
+                    <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+                    <input 
+                        type="text" 
+                        id="search-input" 
+                        placeholder="جستجوی آزاد میان ۶۰ شغل یا نام ابزار (مثلاً: کابینت، مکانیک، طراح سایت، قالی‌شویی، ناخن، v0.dev، Photoroom...)" 
+                        class="w-full pl-9 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-slate-800 focus:ring-2 focus:ring-slate-200 transition-all"
+                    >
+                    <button id="clear-search" class="hidden absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 p-1">
+                        <i data-lucide="x" class="w-4 h-4"></i>
+                    </button>
+                </div>
+
+                <!-- Business Type Pills & View Toggle -->
+                <div class="flex flex-wrap items-center justify-between sm:justify-end gap-2">
+                    <!-- Business Model Filter Pills -->
+                    <div class="bg-slate-100 p-1 rounded-xl border border-slate-200 flex items-center gap-1 overflow-x-auto">
+                        <button onclick="setSectorType('all')" id="sector-all" class="px-2.5 py-1.5 rounded-lg text-xs font-bold bg-slate-900 text-white transition-all shrink-0">همه (۶۰)</button>
+                        <button onclick="setSectorType('آنلاین')" id="sector-online" class="px-2.5 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 transition-all shrink-0">کسب‌وکار آنلاین</button>
+                        <button onclick="setSectorType('فیزیکی')" id="sector-physical" class="px-2.5 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 transition-all shrink-0">کاسبان و صنف فیزیکی</button>
+                        <button onclick="setSectorType('هیبریدی')" id="sector-hybrid" class="px-2.5 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 transition-all shrink-0">ترکیبی (هیبریدی)</button>
+                    </div>
+
+                    <!-- View Mode Switcher -->
+                    <div class="bg-slate-100 p-1 rounded-xl border border-slate-200 flex items-center shrink-0">
+                        <button id="btn-grid-view" onclick="setViewMode('grid')" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-white text-slate-900 shadow-xs transition-all">
+                            <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i>
+                            <span>کارت‌ها</span>
+                        </button>
+                        <button id="btn-table-view" onclick="setViewMode('table')" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 transition-all">
+                            <i data-lucide="table" class="w-3.5 h-3.5"></i>
+                            <span>جدول کامل</span>
+                        </button>
+                        <button id="btn-tools-view" onclick="setViewMode('tools')" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 transition-all">
+                            <i data-lucide="box" class="w-3.5 h-3.5"></i>
+                            <span>بانک ابزارها</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Layout -->
+    <main class="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1">
+        <div class="flex flex-col lg:flex-row gap-6 items-start">
+            
+            <!-- Right Sidebar: 12 Macro Categories -->
+            <aside id="sidebar-panel" class="w-full lg:w-72 shrink-0 lg:sticky lg:top-40">
+                <div class="bg-white border border-slate-200 rounded-2xl p-3 shadow-xs">
+                    <div class="flex items-center justify-between px-2 py-1.5 mb-2 border-b border-slate-100">
+                        <span class="text-xs font-extrabold text-slate-700">۱۲ رسته کلان مشاغل ایران</span>
+                        <button id="reset-filters-btn" onclick="resetAllFilters()" class="text-[11px] font-bold text-slate-500 hover:text-slate-900 hidden">پاک‌سازی فیلتر</button>
+                    </div>
+                    <!-- Categories List -->
+                    <div id="category-list" class="flex lg:flex-col gap-1 overflow-x-auto lg:overflow-x-visible pb-2 lg:pb-0">
+                        <!-- Populated via JS -->
+                    </div>
+                </div>
+
+                <!-- Sidebar Guide Card -->
+                <div class="hidden lg:block mt-4 bg-white border border-slate-200 rounded-2xl p-4 shadow-xs">
+                    <div class="flex items-center gap-2 text-slate-900 font-extrabold text-xs mb-1.5">
+                        <i data-lucide="check-circle" class="w-4 h-4 text-slate-800"></i>
+                        <span>تضمین اصالت ابزارهای معرفی‌شده</span>
+                    </div>
+                    <p class="text-[11px] text-slate-500 leading-relaxed">
+                        برای هر شغل، <strong>۳ تا ۵ هوش مصنوعی تخصصی و غیرتکراری</strong> که دارای پلن رایگان واقعی هستند دسته‌بندی شده است. با کلیک روی هر تگ ابزار، مستقیماً وارد سایت اصلی آن می‌شوید.
+                    </p>
+                </div>
+            </aside>
+
+            <!-- Left Main Content Area -->
+            <section class="flex-1 w-full min-w-0">
+                <!-- Active Filter Status Bar -->
+                <div id="status-bar" class="flex flex-wrap items-center justify-between gap-2 mb-4 bg-white border border-slate-200 rounded-xl px-4 py-2.5 shadow-2xs">
+                    <div class="flex items-center gap-2 text-xs sm:text-sm text-slate-600">
+                        <span class="font-extrabold text-slate-900" id="active-category-title">همه رسته‌های شغلی (۶۰ شغل)</span>
+                        <span class="text-slate-300">|</span>
+                        <span>در حال نمایش <strong id="visible-count" class="text-slate-900 font-extrabold">۶۰</strong> رسته شغلی</span>
+                    </div>
+                    <div class="flex items-center gap-2 text-xs">
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-100 text-slate-700 border border-slate-200 font-semibold text-[11px]">
+                            <i data-lucide="mouse-pointer-click" class="w-3.5 h-3.5 text-slate-600"></i>
+                            روی نام هر هوش مصنوعی کلیک کنید تا باز شود
+                        </span>
+                    </div>
+                </div>
+
+                <!-- 1. Grid View Container -->
+                <div id="jobs-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Populated via JS -->
+                </div>
+
+                <!-- 2. Master Table View Container -->
+                <div id="jobs-table-wrapper" class="hidden bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-xs">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-right border-collapse">
+                            <thead>
+                                <tr class="bg-slate-900 text-white text-xs font-bold">
+                                    <th class="py-3.5 px-3 w-12 text-center">#</th>
+                                    <th class="py-3.5 px-4 w-52">عنوان شغل / صنف</th>
+                                    <th class="py-3.5 px-3 w-40">رسته کلان و نوع</th>
+                                    <th class="py-3.5 px-4">کاربرد عملیاتی هوش مصنوعی در ایران</th>
+                                    <th class="py-3.5 px-4 w-80">ابزارهای تخصصی رایگان (لینک مستقیم)</th>
+                                    <th class="py-3.5 px-3 w-28 text-center">پرامپت</th>
+                                </tr>
+                            </thead>
+                            <tbody id="jobs-table-body" class="divide-y divide-slate-200 text-xs sm:text-sm">
+                                <!-- Populated via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 3. AI Tools Directory View Container -->
+                <div id="ai-directory-wrapper" class="hidden space-y-6">
+                    <!-- Populated via JS -->
+                </div>
+
+                <!-- Empty State -->
+                <div id="empty-state" class="hidden bg-white border border-slate-200 rounded-2xl p-12 text-center">
+                    <div class="w-12 h-12 rounded-2xl bg-slate-100 text-slate-500 flex items-center justify-center mx-auto mb-3">
+                        <i data-lucide="search-x" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="text-base font-bold text-slate-900 mb-1">شغل یا هوش مصنوعی مورد نظر یافت نشد</h3>
+                    <p class="text-xs text-slate-500 mb-4">عبارت جستجو را تغییر دهید یا فیلتر دسته‌بندی را روی «همه» بگذارید.</p>
+                    <button onclick="resetAllFilters()" class="px-4 py-2 bg-slate-900 text-white text-xs font-bold rounded-xl hover:bg-slate-800 transition-all">
+                        نمایش دوباره همه ۶۰ شغل
+                    </button>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 mt-12 py-5">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
+            <div class="font-medium">داشبورد جامع مشاغل ایران و هوش مصنوعی رایگان (نسخه آرگون پرو) • طراحی مینیمال سفید-طوسی با فونت وزیرمتن</div>
+            <div class="flex items-center gap-3">
+                <span class="px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 font-semibold">۶۰ شغل واقعی</span>
+                <span class="px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 font-semibold">۱۲ رسته کلان</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Complete 60-Job Dataset & Interactive Script -->
+    <script>
+        // 12 Macro Categories
+        const categories = [
+            { id: 'all', title: 'همه رسته‌های شغلی', icon: 'layout-grid' },
+            { id: 'cat-1', title: '۱. آنلاین‌شاپ و سوشال‌کامرس', icon: 'shopping-bag' },
+            { id: 'cat-2', title: '۲. مارکت‌پلیس، سایت و واردات', icon: 'globe' },
+            { id: 'cat-3', title: '۳. رسانه، محتوا و اینستاگرام', icon: 'video' },
+            { id: 'cat-4', title: '۴. طراحی وب، کدنویسی و آی‌تی', icon: 'code-2' },
+            { id: 'cat-5', title: '۵. خودرو، مکانیکی و لوازم یدکی', icon: 'wrench' },
+            { id: 'cat-6', title: '۶. ساختمان، کابینت، دکور و املاک', icon: 'building-2' },
+            { id: 'cat-7', title: '۷. خوراک، کافه، رستوران و سوپرمارکت', icon: 'utensils' },
+            { id: 'cat-8', title: '۸. زیبایی، آرایشگاه، مد و باشگاه', icon: 'scissors' },
+            { id: 'cat-9', title: '۹. آموزش، وکالت، پزشکی و مشاوره', icon: 'graduation-cap' },
+            { id: 'cat-10', title: '۱۰. حمل‌ونقل، پیک، پخش و گردشگری', icon: 'truck' },
+            { id: 'cat-11', title: '۱۱. حسابداری، ترید و کافی‌نت', icon: 'calculator' },
+            { id: 'cat-12', title: '۱۲. گل‌فروشی، پت‌شاپ و خدمات شهری', icon: 'flower-2' }
+        ];
+
+        // Complete 60 Jobs Dataset with 3-5 Verified Free AI Tools Each
+        const jobsData = [
+            // ================= دسته ۱: سوشال‌کامرس و آنلاین‌شاپ‌ها (۸ شغل) =================
+            {
+                id: 1,
+                title: 'آنلاین‌شاپ پوشاک، مانتو و شال',
+                categoryId: 'cat-1',
+                categoryName: 'آنلاین‌شاپ و سوشال‌کامرس',
+                sector: 'آنلاین',
+                useCase: 'پوشاندن مجازی مانتو و لباس روی مانکن‌های هوش مصنوعی بدون نیاز به اجاره آتلیه و مدل، حذف پس‌زمینه اتاق و ارسال خودکار قیمت در دایرکت.',
+                tools: [
+                    { name: 'FitRoom', desc: 'تن‌خور مجازی لباس روی مانکن', url: 'https://fitroom.app' },
+                    { name: 'Botika', desc: 'مدلینگ هوش مصنوعی پوشاک', url: 'https://botika.io' },
+                    { name: 'Photoroom', desc: 'حذف پس‌زمینه و سایه‌زنی', url: 'https://www.photoroom.com' },
+                    { name: 'ManyChat', desc: 'ارسال خودکار قیمت در دایرکت', url: 'https://manychat.com' }
+                ],
+                prompt: 'یک سناریوی ۵ استوری فروشگاهی برای معرفی «مانتو لینن تابستانه» بنویس که استوری اول قلاب سوالی درباره گرمای تابستان باشد، استوری دوم نمایش تن‌خور و بافت پارچه، استوری سوم جدول سایزبندی و استوری پنجم دعوت به کامنت کردن کلمه «لینن» برای دریافت لینک خرید باشد.'
+            },
+            {
+                id: 2,
+                title: 'آنلاین‌شاپ کیف، کفش و چرم',
+                categoryId: 'cat-1',
+                categoryName: 'آنلاین‌شاپ و سوشال‌کامرس',
+                sector: 'آنلاین',
+                useCase: 'قرار دادن عکس کفش و کیف روی سنگفرش خیابان، چوب یا دکورهای مینیمال آتلیه‌ای همراه با سایه و نورپردازی طبیعی.',
+                tools: [
+                    { name: 'Pebblely', desc: 'عکاسی محصول در دکور طبیعی', url: 'https://pebblely.com' },
+                    { name: 'Flair.ai', desc: 'صحنه‌آرایی آتلیه‌ای کیف و کفش', url: 'https://flair.ai' },
+                    { name: 'Clipdrop Relight', desc: 'نورپردازی مجدد روی بافت چرم', url: 'https://clipdrop.co/relight' },
+                    { name: 'Claude 3.5', desc: 'نوشتن کپشن‌های فروش کفش', url: 'https://claude.ai' }
+                ],
+                prompt: 'برای یک کفش کتانی سفید روزمره با زیره طبی، ۴ کپشن کوتاه اینستاگرامی بنویس که روی راحتی در پیاده‌روی‌های طولانی، قابل شستشو بودن و ضمانت زیره تمرکز کند.'
+            },
+            {
+                id: 3,
+                title: 'آنلاین‌شاپ آرایشی، بهداشتی و مراقبت پوست',
+                categoryId: 'cat-1',
+                categoryName: 'آنلاین‌شاپ و سوشال‌کامرس',
+                sector: 'آنلاین',
+                useCase: 'چیدمان ژورنالی سرم‌ها و کرم‌ها کنار قطرات آب، گل و سنگ مرمر، ارتقای کیفیت عکس و استخراج جدول علمی سازگاری ترکیبات پوستی.',
+                tools: [
+                    { name: 'Flair.ai', desc: 'چیدمان بطری و سرم پوستی', url: 'https://flair.ai' },
+                    { name: 'Photoroom', desc: 'بک‌گراند ژورنالی آرایشی', url: 'https://www.photoroom.com' },
+                    { name: 'Krea.ai', desc: 'افزایش وضوح عکس محصولات', url: 'https://krea.ai' },
+                    { name: 'Perplexity AI', desc: 'بررسی علمی ترکیبات و تداخلات', url: 'https://www.perplexity.ai' }
+                ],
+                prompt: 'یک جدول مقایسه‌ای ساده و علمی برای پست اسلایدی اینستاگرام بنویس که تفاوت عملکرد «نیاسینامید»، «رتینول» و «سالیسیلیک اسید» را برای انواع پوست چرب و خشک توضیح دهد.'
+            },
+            {
+                id: 4,
+                title: 'آنلاین‌شاپ طلا، نقره و بدلیجات',
+                categoryId: 'cat-1',
+                categoryName: 'آنلاین‌شاپ و سوشال‌کامرس',
+                sector: 'آنلاین',
+                useCase: 'افزایش درخشش و وضوح عکس‌های ماکرو از نگین و طلا، حذف سیاهی بازتاب موبایل روی فلز و طراحی کارت گارانتی و لوگو.',
+                tools: [
+                    { name: 'Krea.ai', desc: 'افزایش درخشش و وضوح جواهرات', url: 'https://krea.ai' },
+                    { name: 'Clipdrop', desc: 'تنظیم تابش نور روی فلز و نگین', url: 'https://clipdrop.co' },
+                    { name: 'Pebblely', desc: 'بک‌گراند مخمل و لوکس طلا', url: 'https://pebblely.com' },
+                    { name: 'Ideogram.ai', desc: 'طراحی لوگو و کارت بسته‌بندی', url: 'https://ideogram.ai' }
+                ],
+                prompt: '۵ ایده ریلز ۱۰ ثانیه‌ای بدون چهره برای نمایش درخشش و رنگ‌ثابت بودن گردنبند نقره و استیل در نور طبیعی خورشید پیشنهاد بده.'
+            },
+            {
+                id: 5,
+                title: 'آنلاین‌شاپ اکسسوری، ساعت و عینک',
+                categoryId: 'cat-1',
+                categoryName: 'آنلاین‌شاپ و سوشال‌کامرس',
+                sector: 'آنلاین',
+                useCase: 'حذف بازتاب نور رینگ‌لایت از روی شیشه عینک و صفحه ساعت، ساخت تصاویر تبلیغاتی مچ دست و اتوماسیون پاسخگویی قیمت.',
+                tools: [
+                    { name: 'Mokker.ai', desc: 'چیدمان آتلیه‌ای ساعت و عینک', url: 'https://mokker.ai' },
+                    { name: 'Clipdrop Cleanup', desc: 'حذف رفلکس نور شیشه عینک', url: 'https://clipdrop.co/cleanup' },
+                    { name: 'Photoroom', desc: 'برش دقیق دور فریم عینک', url: 'https://www.photoroom.com' },
+                    { name: 'ManyChat', desc: 'اتوماسیون قیمت در دایرکت', url: 'https://manychat.com' }
+                ],
+                prompt: 'راهنمای انتخاب فرم فریم عینک آفتابی متناسب با فرم صورت (گرد، بیضی، مربعی، قلبی) را در قالب ۴ اسلاید کوتاه و کاربردی برای استوری بنویس.'
+            },
+            {
+                id: 6,
+                title: 'فروش خانگی خشکبار، زعفران، عسل و ارگانیک',
+                categoryId: 'cat-1',
+                categoryName: 'آنلاین‌شاپ و سوشال‌کامرس',
+                sector: 'هیبریدی',
+                useCase: 'طراحی لیبل و برچسب حرفه‌ای روی شیشه عسل و بسته‌بندی زعفران، داستان‌سرایی از اصالت محصول روستایی و پیامک وفادارسازی مشتری.',
+                tools: [
+                    { name: 'Ideogram.ai', desc: 'طراحی لیبل و بسته‌بندی محصول', url: 'https://ideogram.ai' },
+                    { name: 'Canva AI', desc: 'طراحی کاتالوگ و استوری قیمت', url: 'https://www.canva.com' },
+                    { name: 'Leonardo.ai', desc: 'تصویرسازی مزرعه و طبیعت', url: 'https://leonardo.ai' },
+                    { name: 'DeepSeek', desc: 'نگارش متن داستان محصول و پیامک', url: 'https://chat.deepseek.com' }
+                ],
+                prompt: 'یک متن پیامک صمیمی برای مشتریانی که پاییز گذشته از ما زعفران و عسل خریده‌اند بنویس و پکیج ویژه شب یلدا را با ارسال رایگان به آن‌ها پیشنهاد بده.'
+            },
+            {
+                id: 7,
+                title: 'آنلاین‌شاپ سیسمونی، اسباب‌بازی و لباس کودک',
+                categoryId: 'cat-1',
+                categoryName: 'آنلاین‌شاپ و سوشال‌کامرس',
+                sector: 'آنلاین',
+                useCase: 'ساخت پس‌زمینه‌های فانتزی و کارتونی برای اسباب‌بازی‌ها، نمایش تن‌خور لباس کودک و تولید ویدیوهای شاد معرفی بازی‌های فکری.',
+                tools: [
+                    { name: 'Bing Image Creator', desc: 'ساخت بک‌گراند فانتزی با DALL-E 3', url: 'https://www.bing.com/images/create' },
+                    { name: 'FitRoom', desc: 'تن‌خور مجازی لباس کودک', url: 'https://fitroom.app' },
+                    { name: 'Photoroom', desc: 'سفید کردن پس‌زمینه سیسمونی', url: 'https://www.photoroom.com' },
+                    { name: 'CapCut', desc: 'ادیت ریلز با افکت‌های کودکانه', url: 'https://www.capcut.com' }
+                ],
+                prompt: 'یک چک‌لیست کامل و ضروری از «لباس‌های نوزادی مورد نیاز برای فصل اول تولد» بدون موارد اضافه و تجملاتی بنویس تا مادران باردار پست را ذخیره (Save) کنند.'
+            },
+            {
+                id: 8,
+                title: 'آنلاین‌شاپ دکوری، شمع، رزین و صنایع دستی',
+                categoryId: 'cat-1',
+                categoryName: 'آنلاین‌شاپ و سوشال‌کامرس',
+                sector: 'آنلاین',
+                useCase: 'قرار دادن شمع دست‌ساز، ظروف رزینی و سفال روی میزهای چوبی مدرن در محیط‌های گرم و نوری بدون نیاز به دکور واقعی.',
+                tools: [
+                    { name: 'Pebblely', desc: 'چیدمان شمع و دکوری روی میز مدرن', url: 'https://pebblely.com' },
+                    { name: 'Mokker.ai', desc: 'صحنه‌سازی دکوراسیون منزل', url: 'https://mokker.ai' },
+                    { name: 'Krea.ai', desc: 'بهبود جزئیات بافت رزین و سفال', url: 'https://krea.ai' },
+                    { name: 'Claude 3.5', desc: 'نوشتن کپشن‌های احساسی و هنری', url: 'https://claude.ai' }
+                ],
+                prompt: 'یک متن احساسی و شاعرانه کوتاه برای معرفی «شمع‌های دست‌ساز موم عسل با رایحه وانیل و دارچین» بنویس که حس آرامش شب‌های پاییزی را منتقل کند.'
+            },
+
+            // ================= دسته ۲: مارکت‌پلیس‌ها، تجارت الکترونیک و واردات (۵ شغل) =================
+            {
+                id: 9,
+                title: 'فروشندگان دیجی‌کالا، باسلام و ترب',
+                categoryId: 'cat-2',
+                categoryName: 'مارکت‌پلیس، سایت و واردات',
+                sector: 'آنلاین',
+                useCase: 'سفید کردن ۱۰۰٪ استاندارد پس‌زمینه عکس کالا مطابق قوانین دیجی‌کالا، استخراج جدول مشخصات فنی کالا و محاسبه سود خالص پس از کسر کمیسیون.',
+                tools: [
+                    { name: 'Photoroom', desc: 'سفید کردن استاندارد عکس دیجی‌کالا', url: 'https://www.photoroom.com' },
+                    { name: 'Perplexity AI', desc: 'استخراج دقیق مشخصات فنی کالاها', url: 'https://www.perplexity.ai' },
+                    { name: 'Formula Bot', desc: 'فرمول اکسل محاسبه کمیسیون و سود', url: 'https://formulabot.com' },
+                    { name: 'Claude 3.5', desc: 'پاسخ حرفه‌ای به نظرات منفی خریداران', url: 'https://claude.ai' }
+                ],
+                prompt: 'عنوان استاندارد فارسی و انگلیسی، ۵ ویژگی کلیدی و جدول مشخصات فنی کامل برای درج محصول «پاوربانک شیائومی مدل Redmi 20000mAh 18W» در پنل فروشندگان دیجی‌کالا و ترب را بنویس.'
+            },
+            {
+                id: 10,
+                title: 'مدیران سایت‌های فروشگاهی (ووکامرس و شاپیفای)',
+                categoryId: 'cat-2',
+                categoryName: 'مارکت‌پلیس، سایت و واردات',
+                sector: 'آنلاین',
+                useCase: 'تحلیل کلمات کلیدی پرجستجوی گوگل، نوشتن توضیحات محصول سئو شده، ساخت ابزارک‌های محاسبه‌گر و بررسی نقشه حرارتی کلیک کاربران.',
+                tools: [
+                    { name: 'Ahrefs Free SEO', desc: 'تحلیل کلمات کلیدی و بک‌لینک رایگان', url: 'https://ahrefs.com/free-seo-tools' },
+                    { name: 'Microsoft Clarity', desc: 'تحلیل هوش مصنوعی رفتار و کلیک کاربر', url: 'https://clarity.microsoft.com' },
+                    { name: 'Bolt.new', desc: 'ساخت لندینگ‌پیج و ویجت‌های فروشگاهی', url: 'https://bolt.new' },
+                    { name: 'Claude 3.5', desc: 'تولید توضیحات محصول سئو شده', url: 'https://claude.ai' }
+                ],
+                prompt: 'یک ساختار کامل صفحه محصول (Product Page) با نرخ تبدیل بالا برای فروش آنلاین «قهوه‌ساز اسپرسو خانگی» شامل عنوان متا، توضیحات متا، جدول مقایسه و سوالات متداول بنویس.'
+            },
+            {
+                id: 11,
+                title: 'واردکنندگان خرد و بازرگانان (چین، دبی و ترکیه)',
+                categoryId: 'cat-2',
+                categoryName: 'مارکت‌پلیس، سایت و واردات',
+                sector: 'هیبریدی',
+                useCase: 'مکاتبه تجاری حرفه‌ای برای چانه‌زنی قیمت (MOQ) با کارخانه‌های علی‌بابا، پیدا کردن کد تعرفه گمرکی (HS Code) و محاسبه بهای تمام‌شده بار.',
+                tools: [
+                    { name: 'DeepL Write', desc: 'نگارش و ترجمه مکاتبات تجاری بین‌المللی', url: 'https://www.deepl.com/write' },
+                    { name: 'Perplexity AI', desc: 'استعلام کد تعرفه HS Code و تامین‌کننده', url: 'https://www.perplexity.ai' },
+                    { name: 'Julius AI', desc: 'تحلیل پکینگ‌لیست و بهای تمام‌شده ارزی', url: 'https://julius.ai' },
+                    { name: 'ChatGPT', desc: 'تنظیم پیش‌نویس پرفورما اینویس (PI)', url: 'https://chatgpt.com' }
+                ],
+                prompt: 'یک پیام مذاکره حرفه‌ای به زبان انگلیسی تجاری برای تامین‌کننده چینی در سایت Alibaba بنویس تا برای سفارش نمونه اولیه (Sample) و کاهش حداقل تعداد سفارش (MOQ) از ۱۰۰۰ عدد به ۳۰۰ عدد تخفیف بگیریم.'
+            },
+            {
+                id: 12,
+                title: 'پخش عمده و بنکداران بازار بزرگ',
+                categoryId: 'cat-2',
+                categoryName: 'مارکت‌پلیس، سایت و واردات',
+                sector: 'فیزیکی',
+                useCase: 'تبدیل فاکتورهای کاغذی و لیست قیمت‌های دستی به جداول اکسل مرتب، محاسبه قیمت فروش پلکانی و ارسال خودکار کاتالوگ عمده.',
+                tools: [
+                    { name: 'Rows.com AI', desc: 'مدیریت آنلاین لیست قیمت پلکانی و انبار', url: 'https://rows.com' },
+                    { name: 'Formula Bot', desc: 'فرمول‌نویسی اکسل برای حساب کتاب عمده', url: 'https://formulabot.com' },
+                    { name: 'Google Lens', desc: 'تبدیل فاکتور کاغذی به متن و جدول', url: 'https://lens.google' },
+                    { name: 'ManyChat', desc: 'ارسال خودکار لیست قیمت عمده به مغازه‌دار', url: 'https://manychat.com' }
+                ],
+                prompt: 'یک فرمول اکسل بنویس که بر اساس تعداد سفارش مغازه‌دار در ستون B، اگر سفارش زیر ۱۰ کارتن بود قیمت پایه، بین ۱۰ تا ۵۰ کارتن ۵٪ تخفیف، و بالای ۵۰ کارتن ۹٪ تخفیف را همراه با مالیات حساب کند.'
+            },
+            {
+                id: 13,
+                title: 'دراپ‌شیپرها و واسطه‌های فروش (همکاری در فروش)',
+                categoryId: 'cat-2',
+                categoryName: 'مارکت‌پلیس، سایت و واردات',
+                sector: 'آنلاین',
+                useCase: 'شناسایی کالاهای ترند فصلی در ایران، تغییر پس‌زمینه عکس‌های تکراری تامین‌کنندگان برای منحصربه‌فرد شدن پیج و ساخت تیزر تبلیغاتی.',
+                tools: [
+                    { name: 'Google Trends', desc: 'کشف کالاهای پرسرچ و ترند فصلی ایران', url: 'https://trends.google.com' },
+                    { name: 'Pebblely', desc: 'تغییر صحنه عکس تکراری تامین‌کننده', url: 'https://pebblely.com' },
+                    { name: 'CapCut Web', desc: 'ساخت ریلز تبلیغاتی از روی عکس کالا', url: 'https://www.capcut.com' },
+                    { name: 'Perplexity AI', desc: 'بررسی قیمت کف بازار و حاشیه سود', url: 'https://www.perplexity.ai' }
+                ],
+                prompt: 'چطور می‌توانم یک محصول عمومی مثل «پمپ باد فندکی خودرو» را به صورت دراپ‌شیپینگ در اینستاگرام بفروشم؟ ۳ زاویه تبلیغاتی و سناریوی ویدیویی ترسناک/کاربردی برای تحریک خرید آنی بنویس.'
+            },
+
+            // ================= دسته ۳: رسانه، تبلیغات و خدمات اینستاگرام (۷ شغل) =================
+            {
+                id: 14,
+                title: 'ادمین اینستاگرام و تلگرام',
+                categoryId: 'cat-3',
+                categoryName: 'رسانه، محتوا و اینستاگرام',
+                sector: 'آنلاین',
+                useCase: 'اتوماسیون ارسال لینک و قیمت با کامنت کردن یک کلمه، طراحی تقویم محتوایی ۳۰ روزه، نوشتن قلاب‌های ۳ ثانیه اول و آنالیز پیج.',
+                tools: [
+                    { name: 'ManyChat', desc: 'اتوماسیون رایگان کامنت به دایرکت', url: 'https://manychat.com' },
+                    { name: 'Notion AI', desc: 'مدیریت تقویم محتوایی و تسک‌های پیج', url: 'https://www.notion.so' },
+                    { name: 'Claude 3.5', desc: 'نوشتن سناریوی استوری و قلاب ریلز', url: 'https://claude.ai' },
+                    { name: 'Metricool Free', desc: 'زمان‌بندی پست و آنالیز رایگان پیج', url: 'https://metricool.com' }
+                ],
+                prompt: 'یک تقویم محتوایی ۱۴ روزه (شامل موضوع ریلز، قلاب ۳ ثانیه اول و سناریوی استوری همان روز) برای پیج اینستاگرام یک «کلینیک دندانپزشکی و لمینت» طراحی کن.'
+            },
+            {
+                id: 15,
+                title: 'تدوینگر ریلز و ویدیوهای کوتاه موبایلی',
+                categoryId: 'cat-3',
+                categoryName: 'رسانه، محتوا و اینستاگرام',
+                sector: 'آنلاین',
+                useCase: 'تولید خودکار زیرنویس فارسی متحرک، حذف ۱۰۰٪ نویز باد و صدای خیابان از صدای ویدیو، و تبدیل ویدیوهای طولانی به کلیپ‌های کوتاه.',
+                tools: [
+                    { name: 'CapCut Desktop', desc: 'زیرنویس خودکار و افکت‌های ترند ریلز', url: 'https://www.capcut.com' },
+                    { name: 'Adobe Podcast', desc: 'حذف نویز و تبدیل صدای گوشی به استودیویی', url: 'https://podcast.adobe.com/enhance' },
+                    { name: 'OpusClip', desc: 'برش هوشمند ویدیوی بلند به کلیپ وایرال', url: 'https://www.opus.pro' },
+                    { name: 'VocalRemover', desc: 'جداسازی موزیک پس‌زمینه از صدای گوینده', url: 'https://vocalremover.org' }
+                ],
+                prompt: 'برای تدوین یک ویدیوی آموزشی ۶۰ ثانیه‌ای صحبت جلوی دوربین (Talking Head)، در چه ثانیه‌هایی باید B-roll، زوم، افکت صوتی (SFX) و تغییر زاویه بگذارم تا مخاطب تا ثانیه آخر بماند؟'
+            },
+            {
+                id: 16,
+                title: 'یوتیوبرها و استریمرها',
+                categoryId: 'cat-3',
+                categoryName: 'رسانه، محتوا و اینستاگرام',
+                sector: 'آنلاین',
+                useCase: 'پیدا کردن موضوعات کم‌رقابت و پرسرچ یوتیوب، طراحی تصاویر تامبنیل (Thumbnail) خیره‌کننده با نرخ کلیک بالا و نگارش اسکریپت.',
+                tools: [
+                    { name: 'VidIQ Free', desc: 'تحلیل تایتل، تگ و ایده‌یابی یوتیوب', url: 'https://vidiq.com' },
+                    { name: 'Leonardo.ai', desc: 'طراحی تامبنیل‌های جذاب یوتیوب', url: 'https://leonardo.ai' },
+                    { name: 'NotebookLM', desc: 'تبدیل منابع تحقیق به فیلم‌نامه یوتیوب', url: 'https://notebooklm.google' },
+                    { name: 'ElevenLabs', desc: 'تولید نریشن و افکت‌های صوتی رایگان', url: 'https://elevenlabs.io' }
+                ],
+                prompt: '۵ ایده تایتل (Title) و طرح تصویر کاور (Thumbnail) با نرخ کلیک بالا (CTR) برای یک ویدیوی یوتیوب درباره «مقایسه واقعی گوشی‌های میان‌رده سامسونگ و شیائومی در بازار ایران» پیشنهاد بده.'
+            },
+            {
+                id: 17,
+                title: 'طراح گرافیست، لوگو و بسته‌بندی',
+                categoryId: 'cat-3',
+                categoryName: 'رسانه، محتوا و اینستاگرام',
+                sector: 'هیبریدی',
+                useCase: 'تولید لوگو و تایپوگرافی دقیق، ساخت آیکون و فایل‌های وکتور قابل ویرایش (SVG) به صورت رایگان، و ارتقای کیفیت تصاویر بی‌کیفیت تا 4K.',
+                tools: [
+                    { name: 'Ideogram 2.0', desc: 'قدرتمندترین ابزار رایگان لوگو و تایپوگرافی', url: 'https://ideogram.ai' },
+                    { name: 'Recraft.ai', desc: 'تولید وکتور SVG، آیکون و ست گرافیکی', url: 'https://www.recraft.ai' },
+                    { name: 'Krea.ai Upscaler', desc: 'ارتقای کیفیت تصاویر پیکسلی تا 4K', url: 'https://krea.ai' },
+                    { name: 'Adobe Firefly', desc: 'ویرایش تصویر و Generative Fill رایگان', url: 'https://firefly.adobe.com' }
+                ],
+                prompt: 'پرامپت انگلیسی دقیق برای تولید یک لوگوی مینیمال خطی و مدرن در Ideogram و Recraft برای برند قهوه تخصصی به نام «KAVEH ROASTERY» با ترکیب رنگ مشکی مات و طلایی بنویس.'
+            },
+            {
+                id: 18,
+                title: 'کپی‌رایتر و سناریونویس تبلیغاتی',
+                categoryId: 'cat-3',
+                categoryName: 'رسانه، محتوا و اینستاگرام',
+                sector: 'آنلاین',
+                useCase: 'نوشتن سناریوهای تبلیغاتی بر اساس فرمول‌های AIDA و PAS، استخراج دغدغه‌ها و نقاط درد مشتریان ایرانی و طراحی متن صفحات فرود.',
+                tools: [
+                    { name: 'Claude 3.5 Sonnet', desc: 'بهترین قلم فارسی برای کپی‌رایتینگ', url: 'https://claude.ai' },
+                    { name: 'Perplexity AI', desc: 'تحقیق بازار و کشف نقاط درد مخاطب', url: 'https://www.perplexity.ai' },
+                    { name: 'DeepSeek R1', desc: 'طراحی استراتژی کمپین و قیف فروش', url: 'https://chat.deepseek.com' },
+                    { name: 'Copy.ai', desc: 'تولید ساختار ایمیل و پیامک تبلیغاتی', url: 'https://www.copy.ai' }
+                ],
+                prompt: 'بر اساس فرمول کپی‌رایتینگ PAS (مشکل، تشدید مشکل، راه‌حل)، یک سناریوی تیزر تبلیغاتی ۴۵ ثانیه‌ای برای یک اپلیکیشن «مدیریت اقساط و حساب‌وکتاب شخصی» بنویس.'
+            },
+            {
+                id: 19,
+                title: 'عکاسان صنعتی، ودینگ و آتلیه‌ها',
+                categoryId: 'cat-3',
+                categoryName: 'رسانه، محتوا و اینستاگرام',
+                sector: 'فیزیکی',
+                useCase: 'ترمیم عکس‌های تار یا کم‌نور مراسم، اصلاح نورپردازی چهره پس از عکاسی، حذف افراد یا اشیاء اضافه در پس‌زمینه و روتوش سریع.',
+                tools: [
+                    { name: 'Krea.ai Enhancer', desc: 'ترمیم تاری عکس و افزایش جزئیات چهره', url: 'https://krea.ai' },
+                    { name: 'Clipdrop Relight', desc: 'نورپردازی مجدد چهره بعد از عکاسی', url: 'https://clipdrop.co/relight' },
+                    { name: 'Photoroom', desc: 'حذف اشیاء مزاحم از پس‌زمینه عکس', url: 'https://www.photoroom.com' },
+                    { name: 'Cutout.pro', desc: 'اصلاح رنگ و روتوش سریع پرتره', url: 'https://www.cutout.pro' }
+                ],
+                prompt: 'یک پکیج قیمت‌گذاری ۳ سطحی (نقره‌ای، طلایی، VIP) برای خدمات عکاسی و ساخت تیزر تبلیغاتی از رستوران‌ها و کافه‌ها تنظیم کن که مشتری به انتخاب پکیج طلایی ترغیب شود.'
+            },
+            {
+                id: 20,
+                title: 'گویندگان، نریتورها و پادکسترها',
+                categoryId: 'cat-3',
+                categoryName: 'رسانه، محتوا و اینستاگرام',
+                sector: 'آنلاین',
+                useCase: 'تبدیل صدای ضبط‌شده در اتاق معمولی به صدای گرم استودیویی بدون اکو، جداسازی وکال از موسیقی و پیاده‌سازی فایل صوتی به متن.',
+                tools: [
+                    { name: 'Adobe Podcast', desc: 'شفاف‌سازی و استودیویی کردن صدا (رایگان)', url: 'https://podcast.adobe.com/enhance' },
+                    { name: 'VocalRemover.org', desc: 'جداسازی صدای خواننده از موسیقی متن', url: 'https://vocalremover.org' },
+                    { name: 'ElevenLabs', desc: 'تولید افکت صوتی (SFX) و نریشن', url: 'https://elevenlabs.io' },
+                    { name: 'TurboScribe', desc: 'تبدیل دقیق فایل صوتی فارسی به متن', url: 'https://turboscribe.ai' }
+                ],
+                prompt: 'متن یک نریشن ۳۰ ثانیه‌ای با لحن حماسی و تاثیرگذار برای تیزر معرفی یک کارخانه تولید قطعات صنعتی با ۳۰ سال سابقه را همراه با راهنمای مکث‌ها و لحن بیان بنویس.'
+            },
+
+            // ================= دسته ۴: طراحی وب، برنامه‌نویسی و آی‌تی (۴ شغل) =================
+            {
+                id: 21,
+                title: 'طراحان سایت (وردپرس، المنتور و رابط کاربری)',
+                categoryId: 'cat-4',
+                categoryName: 'طراحی وب، کدنویسی و آی‌تی',
+                sector: 'آنلاین',
+                useCase: 'تبدیل متن به رابط کاربری و کد آماده (React/HTML/Tailwind)، ساخت نقشه سایت و وایرفریم در ۶۰ ثانیه، و رفع خطاهای PHP و CSS وردپرس.',
+                tools: [
+                    { name: 'v0.dev', desc: 'ساخت رابط کاربری مدرن از روی پرامپت', url: 'https://v0.dev' },
+                    { name: 'Bolt.new', desc: 'طراحی و اجرای کامل وب‌اپ در مرورگر', url: 'https://bolt.new' },
+                    { name: 'Lovable.dev', desc: 'تبدیل ایده به وب‌سایت فول‌استک', url: 'https://lovable.dev' },
+                    { name: 'Relume AI', desc: 'ساخت نقشه سایت و وایرفریم در ۱ دقیقه', url: 'https://www.relume.io' },
+                    { name: 'CodeWP / Cursor', desc: 'تولید شورت‌کد و رفع باگ وردپرس/ووکامرس', url: 'https://cursor.com' }
+                ],
+                prompt: 'یک کد شورت‌کد PHP و استایل CSS مدرن و ریسپانسیو (راست‌چین با فونت وزیر) برای وردپرس بنویس که یک ماشین‌حساب «محاسبه اقساط خرید طلا» را در برگه المنتور نمایش دهد.'
+            },
+            {
+                id: 22,
+                title: 'برنامه‌نویسان فرانت‌اند، بک‌اند و موبایل',
+                categoryId: 'cat-4',
+                categoryName: 'طراحی وب، کدنویسی و آی‌تی',
+                sector: 'آنلاین',
+                useCase: 'تکمیل خودکار کدها با درک کل فایل‌های پروژه، دیباگ کردن خطاهای پیچیده، نوشتن تست‌های واحد (Unit Test) و مستندسازی API.',
+                tools: [
+                    { name: 'Cursor IDE', desc: 'محیط کدنویسی هوشمند با درک کل پروژه', url: 'https://cursor.com' },
+                    { name: 'GitHub Copilot Free', desc: 'تکمیل خودکار کد و چت دیباگ رایگان', url: 'https://github.com/features/copilot' },
+                    { name: 'Google AI Studio', desc: 'تست رایگان API مدل‌های Gemini با کانتکست بالا', url: 'https://aistudio.google.com' },
+                    { name: 'Blackbox AI', desc: 'جستجو و تولید سریع قطعه کدهای فنی', url: 'https://www.blackbox.ai' },
+                    { name: 'Codeium (Windsurf)', desc: 'دستیار کدنویسی رایگان نامحدود', url: 'https://codeium.com' }
+                ],
+                prompt: 'این کوئری SQL روی جدولی با ۵ میلیون رکورد کند عمل می‌کند. ایندکس‌گذاری بهینه (Composite Index) و بازنویسی کوئری را برای کاهش زمان اجرا به زیر ۵۰ میلی‌ثانیه انجام بده.'
+            },
+            {
+                id: 23,
+                title: 'متخصصان سئو (SEO) و دیجیتال مارکتینگ',
+                categoryId: 'cat-4',
+                categoryName: 'طراحی وب، کدنویسی و آی‌تی',
+                sector: 'آنلاین',
+                useCase: 'بررسی سلامت تکنیکال سایت و بک‌لینک‌ها، خوشه‌بندی کلمات کلیدی (Keyword Clustering)، تولید کدهای اسکیما و تحلیل شکاف محتوایی رقبا.',
+                tools: [
+                    { name: 'Ahrefs Webmaster', desc: 'مانیتورینگ رایگان سئو تکنیکال و بک‌لینک', url: 'https://ahrefs.com/webmaster-tools' },
+                    { name: 'Perplexity AI', desc: 'استخراج کلمات کلیدی معنایی (LSI)', url: 'https://www.perplexity.ai' },
+                    { name: 'AnswerThePublic', desc: 'کشف سوالات واقعی کاربران در گوگل', url: 'https://answerthepublic.com' },
+                    { name: 'Claude 3.5 Sonnet', desc: 'تولید اسکیما مارک‌آپ JSON-LD و استراتژی', url: 'https://claude.ai' }
+                ],
+                prompt: 'برای کلمه کلیدی اصلی «خرید بلیط هواپیما»، یک ساختار خوشه‌بندی محتوایی (Topic Cluster) شامل ۱ صفحه ستون (Pillar) و ۸ مقاله فرعی با هدف سرچ (Search Intent) متفاوت طراحی کن.'
+            },
+            {
+                id: 24,
+                title: 'تعمیرکاران سخت‌افزار موبایل، لپ‌تاپ و کنسول',
+                categoryId: 'cat-4',
+                categoryName: 'طراحی وب، کدنویسی و آی‌تی',
+                sector: 'فیزیکی',
+                useCase: 'پیدا کردن دیتاشیت آی‌سی‌های تغذیه و شارژ، شناسایی قطعات SMD سوخته روی برد از روی عکس و یافتن راهنمای باز کردن دستگاه‌ها.',
+                tools: [
+                    { name: 'iFixit Guides', desc: 'راهنمای تصویری باز کردن و تعمیر قطعات', url: 'https://www.ifixit.com' },
+                    { name: 'Perplexity AI', desc: 'جستجوی دیتاشیت آی‌سی و کدهای خطای بایوس', url: 'https://www.perplexity.ai' },
+                    { name: 'Google Lens', desc: 'شناسایی شماره فنی قطعات SMD از روی عکس', url: 'https://lens.google' },
+                    { name: 'Phind', desc: 'موتور جستجوی فنی عیب‌یابی برد الکترونیک', url: 'https://www.phind.com' }
+                ],
+                prompt: 'لپ‌تاپ ایسوس پس از روشن شدن ۳ چشمک روی چراغ پاور می‌زند و تصویر نمی‌دهد. ترتیب عیب‌یابی ولتاژهای اصلی روی مادربرد و احتمال خرابی بایوس یا رم را به صورت گام‌به‌گام بنویس.'
+            },
+
+            // ================= دسته ۵: خودرو، تعمیرگاه و خدمات وابسته (۵ شغل) =================
+            {
+                id: 25,
+                title: 'مکانیک، جلوبندی‌ساز و برق خودرو (انژکتور و ایسیو)',
+                categoryId: 'cat-5',
+                categoryName: 'خودرو، مکانیکی و لوازم یدکی',
+                sector: 'فیزیکی',
+                useCase: 'ترجمه و تحلیل دقیق کدهای خطای دیاگ (OBD-II) خودروهای چینی و داخلی، یافتن ترتیب عیب‌یابی سنسورها و جدول گشتاور بستن سرسیلندر.',
+                tools: [
+                    { name: 'Perplexity AI', desc: 'تحلیل کدهای خطای دیاگ OBD-II و سنسورها', url: 'https://www.perplexity.ai' },
+                    { name: 'Phind', desc: 'جستجوی فنی نقشه سیم‌کشی و فیوزها', url: 'https://www.phind.com' },
+                    { name: 'ManualsLib', desc: 'بانک رایگان کاتالوگ تعمیراتی خودروها', url: 'https://www.manualslib.com' },
+                    { name: 'DeepSeek R1', desc: 'عیب‌یابی منطقی علائم خرابی موتور و گیربکس', url: 'https://chat.deepseek.com' }
+                ],
+                prompt: 'در خودروی پژو ۲۰۷ با موتور TU5 کد خطای P0171 (فقیر بودن مخلوط سوخت و هوا) ثبت شده و خودرو در حالت درجا لرزش دارد. به ترتیب اولویت از ساده‌ترین علت تا گران‌ترین قطعه، چک‌لیست تست مکانیک را بنویس.'
+            },
+            {
+                id: 26,
+                title: 'صافکاری مدرن (PDR)، نقاشی و دیتیلینگ خودرو',
+                categoryId: 'cat-5',
+                categoryName: 'خودرو، مکانیکی و لوازم یدکی',
+                sector: 'فیزیکی',
+                useCase: 'ساخت ریلزهای خیره‌کننده قبل و بعد از احیای رنگ و سرامیک برای جذب خودروهای لوکس، حذف پلاک خودرو در عکس‌ها و برآورد خسارت.',
+                tools: [
+                    { name: 'CapCut', desc: 'تولید کلیپ‌های قبل/بعد صافکاری و سرامیک', url: 'https://www.capcut.com' },
+                    { name: 'Clipdrop Cleanup', desc: 'محو کردن پلاک خودرو و تمیز کردن بک‌گراند', url: 'https://clipdrop.co/cleanup' },
+                    { name: 'Krea.ai', desc: 'افزایش شفافیت عکس انعکاس آینه‌ای رنگ بدنه', url: 'https://krea.ai' },
+                    { name: 'Google Gemini', desc: 'تنظیم متن مشاوره و برآورد اولیه از روی عکس', url: 'https://gemini.google.com' }
+                ],
+                prompt: 'یک متن علمی و متقاعدکننده برای استوری اینستاگرام بنویس که به صاحبان خودروهای صفر کیلومتر توضیح دهد چرا «پوشش سرامیک و کاور PPF» از افت قیمت میلیونی خودرو جلوگیری می‌کند.'
+            },
+            {
+                id: 27,
+                title: 'فروشندگان لوازم یدکی خودرو (ایرانی، چینی و کره‌ای)',
+                categoryId: 'cat-5',
+                categoryName: 'خودرو، مکانیکی و لوازم یدکی',
+                sector: 'هیبریدی',
+                useCase: 'معادل‌یابی قطعات مشترک خودروهای چینی با پژو و میتسوبیشی، یافتن شماره فنی قطعه (OEM Part Number) و تشخیص قطعه کهنه از روی عکس.',
+                tools: [
+                    { name: 'Perplexity AI', desc: 'معادل‌یابی قطعات مشترک و پارت‌نامبر فنی', url: 'https://www.perplexity.ai' },
+                    { name: 'Google Lens', desc: 'شناسایی قطعه یدکی از روی عکس داغی مشتری', url: 'https://lens.google' },
+                    { name: 'Rows.com AI', desc: 'مدیریت لیست موجودی و قیمت روز قطعات', url: 'https://rows.com' },
+                    { name: 'Formula Bot', desc: 'فرمول اکسل انبارگردانی لوازم یدکی', url: 'https://formulabot.com' }
+                ],
+                prompt: 'لیست قطعات مصرفی و جلوبندی خودروی «ام‌وی‌ام X22 و X33» که با سایر خودروهای موجود در بازار ایران مشترک یا قابل جایگزینی هستند را به همراه شماره فنی استخراج کن.'
+            },
+            {
+                id: 28,
+                title: 'نمایشگاه‌داران و مشاوران خرید و فروش خودرو',
+                categoryId: 'cat-5',
+                categoryName: 'خودرو، مکانیکی و لوازم یدکی',
+                sector: 'فیزیکی',
+                useCase: 'حذف پس‌زمینه شلوغ کوچه و قرار دادن خودرو در نمایشگاه مدرن مجازی، نوشتن متن آگهی دیوار و باما، و ساخت ویدیوی معرفی آپشن‌ها.',
+                tools: [
+                    { name: 'Photoroom', desc: 'قرار دادن عکس خودرو در پس‌زمینه نمایشگاه', url: 'https://www.photoroom.com' },
+                    { name: 'Claude 3.5', desc: 'نوشتن آگهی فروش حرفه‌ای برای دیوار و باما', url: 'https://claude.ai' },
+                    { name: 'CapCut', desc: 'ادیت ویدیوی معرفی آپشن‌های خودرو در ۱ دقیقه', url: 'https://www.capcut.com' },
+                    { name: 'Perplexity AI', desc: 'مقایسه مشخصات فنی دو خودرو برای مشاوره', url: 'https://www.perplexity.ai' }
+                ],
+                prompt: 'یک متن آگهی بسیار مرتب و اعتمادساز برای سایت باما و دیوار بنویس: خودروی تارا اتوماتیک V4 مدل ۱۴۰۳، کارکرد ۱۲ هزار کیلومتر، بی‌رنگ به شرط کارشناسی، سرویس‌ها در نمایندگی انجام شده.'
+            },
+            {
+                id: 29,
+                title: 'کارواش، تعویض روغنی و آپاراتی',
+                categoryId: 'cat-5',
+                categoryName: 'خودرو، مکانیکی و لوازم یدکی',
+                sector: 'فیزیکی',
+                useCase: 'تنظیم سیستم پیامک یادآوری خودکار موعد تعویض روغن بعدی مشتری، استعلام حجم دقیق روغن موتور و گیربکس خودروهای جدید و طراحی کارت سرویس.',
+                tools: [
+                    { name: 'Perplexity AI', desc: 'استعلام درجه گرانروی (SAE) و حجم روغن خودروها', url: 'https://www.perplexity.ai' },
+                    { name: 'Canva AI', desc: 'طراحی کارت سرویس و بنر تخفیف کارواش', url: 'https://www.canva.com' },
+                    { name: 'ChatGPT', desc: 'نوشتن متن پیامک یادآوری سرویس ۵۰۰۰ کیلومتر', url: 'https://chatgpt.com' },
+                    { name: 'Formula Bot', desc: 'جدول اکسل ثبت پلاک و تاریخ مراجعه مشتریان', url: 'https://formulabot.com' }
+                ],
+                prompt: 'جدول راهنمای «حجم دقیق روغن موتور با فیلتر و درجه گرانروی استاندارد (مثلاً 5W-30 یا 10W-40)» را برای ۱۰ خودروی پرطرفدار بازار ایران (شاهین، دنا پلاس توربو، تارا، جک S5، تیگو ۷) آماده کن.'
+            },
+
+            // ================= دسته ۶: ساختمان، دکوراسیون، املاک و تأسیسات (۶ شغل) =================
+            {
+                id: 30,
+                title: 'مشاوران املاک و بنگاه‌های معاملاتی',
+                categoryId: 'cat-6',
+                categoryName: 'ساختمان، کابینت، دکور و املاک',
+                sector: 'فیزیکی',
+                useCase: 'چیدمان مجازی مبلمان در عکس خانه‌های نوساز و خالی (Virtual Staging) برای جذب سریع خریدار در دیوار و نوشتن آگهی‌های متمایز ملکی.',
+                tools: [
+                    { name: 'REimagineHome', desc: 'مبله کردن مجازی خانه‌های خالی در عکس', url: 'https://www.reimaginehome.ai' },
+                    { name: 'Spacely AI', desc: 'بازطراحی فضای داخلی بدون واترمارک', url: 'https://www.spacely.ai' },
+                    { name: 'Claude 3.5', desc: 'نوشتن متن آگهی دیوار بر اساس روانشناسی ملک', url: 'https://claude.ai' },
+                    { name: 'CapCut', desc: 'تدوین تور ویدیویی بازدید آپارتمان', url: 'https://www.capcut.com' }
+                ],
+                prompt: 'یک متن آگهی فروش آپارتمان برای دیوار بنویس که بدون استفاده از کلمات کلیشه‌ای مثل «اکازیون و زیر قیمت»، روی نقشه بدون پرتی، نورگیر جنوبی و آرامش ساختمان تاکید کند.'
+            },
+            {
+                id: 31,
+                title: 'کابینت‌سازان، نجاران و کمد دیواری (MDF)',
+                categoryId: 'cat-6',
+                categoryName: 'ساختمان، کابینت، دکور و املاک',
+                sector: 'فیزیکی',
+                useCase: 'گرفتن عکس با موبایل از آشپزخانه خام مشتری و تبدیل آن در ۳۰ ثانیه به رندر سه‌بعدی کابینت مدرن یا نئوکلاسیک برای قطعی کردن سفارش.',
+                tools: [
+                    { name: 'PromeAI', desc: 'تبدیل عکس آشپزخانه خام به رندر کابینت', url: 'https://www.promeai.pro' },
+                    { name: 'MyArchitectAI', desc: 'رندر سریع طرح‌های چوبی و کابینت از اسکچ', url: 'https://www.myarchitectai.com' },
+                    { name: 'ReRender AI', desc: 'تغییر رنگ و متریال کابینت در عکس مشتری', url: 'https://rerenderai.com' },
+                    { name: 'Planner 5D', desc: 'طراحی پلان دوبعدی و سه‌بعدی آشپزخانه', url: 'https://planner5d.com' }
+                ],
+                prompt: 'یک برگه راهنمای مقایسه شفاف بین «کابینت نئوکلاسیک (پلی‌اورتان)، های‌گلاس ترک و ام‌دی‌اف مات» از نظر مقاومت در برابر رطوبت، خط‌وخش و قیمت برای ارائه به مشتری بنویس.'
+            },
+            {
+                id: 32,
+                title: 'طراحان دکوراسیون داخلی و بازسازی ساختمان',
+                categoryId: 'cat-6',
+                categoryName: 'ساختمان، کابینت، دکور و املاک',
+                sector: 'هیبریدی',
+                useCase: 'تبدیل اسکچ‌های دستی یا مدل‌های خام SketchUp به رندرهای فتورئالیستیک در چند ثانیه و پیشنهاد پالت رنگی هماهنگ برای بازسازی.',
+                tools: [
+                    { name: 'Spacely AI', desc: 'رندر دکوراسیون داخلی حرفه‌ای (کردیت رایگان)', url: 'https://www.spacely.ai' },
+                    { name: 'PromeAI', desc: 'تبدیل اسکچ دستی به رندر معماری واقع‌گرایانه', url: 'https://www.promeai.pro' },
+                    { name: 'Vizcom.ai', desc: 'رندر آنی طراحی صنعتی و مبلمان از روی خط', url: 'https://www.vizcom.ai' },
+                    { name: 'Coolors AI', desc: 'تولید پالت رنگی استاندارد دکوراسیون داخلی', url: 'https://coolors.co' }
+                ],
+                prompt: 'برای بازسازی یک آپارتمان ۸۵ متری قدیمی با بودجه متوسط، کدام تغییرات (نورپردازی لاینر، کفپوش SPC، حذف شومینه قدیمی، رنگ دیوار) بیشترین ارزش افزوده بصری را با کمترین هزینه ایجاد می‌کند؟'
+            },
+            {
+                id: 33,
+                title: 'نصاب و تعمیرکار پکیج، کولر گازی و تأسیسات',
+                categoryId: 'cat-6',
+                categoryName: 'ساختمان، کابینت، دکور و املاک',
+                sector: 'فیزیکی',
+                useCase: 'استخراج فوری جدول کدهای ارور (Error Codes) انواع پکیج‌های ایرانی و خارجی، و محاسبه مهندسی ظرفیت BTU کولر گازی بر اساس متراژ.',
+                tools: [
+                    { name: 'Perplexity AI', desc: 'بانک کدهای ارور برد پکیج بوتان، ایران‌رادیاتور و بوش', url: 'https://www.perplexity.ai' },
+                    { name: 'ManualsLib', desc: 'دانلود رایگان دفترچه فنی و نقشه انفجاری پکیج', url: 'https://www.manualslib.com' },
+                    { name: 'DeepSeek R1', desc: 'محاسبه دقیق ظرفیت BTU کولر و توان پکیج', url: 'https://chat.deepseek.com' },
+                    { name: 'Tally.so', desc: 'فرم آنلاین ثبت نوبت سرویس سالانه مشتریان', url: 'https://tally.so' }
+                ],
+                prompt: 'در پکیج ایران‌رادیاتور مدل L24FF کد خطای E51 (یا جفت شدن چراغ‌های ۴۰ و ۷۰ و ۸۰) نمایش داده می‌شود. علت بروز خطا و مراحل تست قطعات توسط تعمیرکار را توضیح بده.'
+            },
+            {
+                id: 34,
+                title: 'مغازه‌های ابزارآلات، رنگ، کاغذ دیواری و سرامیک',
+                categoryId: 'cat-6',
+                categoryName: 'ساختمان، کابینت، دکور و املاک',
+                sector: 'فیزیکی',
+                useCase: 'تغییر مجازی رنگ دیوار، طرح کاغذ دیواری و سرامیک کف روی عکس اتاق خود مشتری در مغازه، و مقایسه مشخصات فنی ابزارهای برقی.',
+                tools: [
+                    { name: 'PromeAI', desc: 'تست مجازی کاغذ دیواری و سرامیک در عکس اتاق', url: 'https://www.promeai.pro' },
+                    { name: 'REimagineHome', desc: 'تغییر رنگ دیوار و کفپوش خانه مشتری', url: 'https://www.reimaginehome.ai' },
+                    { name: 'Perplexity AI', desc: 'مقایسه مشخصات فنی دریل و ابزارهای صنعتی', url: 'https://www.perplexity.ai' },
+                    { name: 'Ideogram.ai', desc: 'طراحی کاتالوگ و پوستر راهنمای ابزارآلات', url: 'https://ideogram.ai' }
+                ],
+                prompt: 'فرمول محاسبه دقیق تعداد رول کاغذ دیواری (با عرض ۵۳ سانتی‌متر و طول ۱۰ متر) برای اتاقی با ابعاد ۴ در ۵ متر و ارتفاع سقف ۲.۸۰ متر با کسر یک پنجره و در را به زبان ساده بنویس.'
+            },
+            {
+                id: 35,
+                title: 'آهن‌فروشان، مصالح‌فروشان و پیمانکاران ساختمانی',
+                categoryId: 'cat-6',
+                categoryName: 'ساختمان، کابینت، دکور و املاک',
+                sector: 'فیزیکی',
+                useCase: 'محاسبه سریع جدول متره و وزن میلگرد و تیرآهن، تبدیل قبض‌های باسکول و فاکتورهای دست‌نویس کارگاه به اکسل و تنظیم صورت‌وضعیت.',
+                tools: [
+                    { name: 'Julius AI', desc: 'محاسبه جدول متره و وزن مقاطع فولادی در اکسل', url: 'https://julius.ai' },
+                    { name: 'Formula Bot', desc: 'فرمول‌نویسی اکسل برای حسابداری کارگاه ساختمان', url: 'https://formulabot.com' },
+                    { name: 'Google Lens', desc: 'تبدیل فاکتور دست‌نویس مصالح به متن دیجیتال', url: 'https://lens.google' },
+                    { name: 'Claude 3.5', desc: 'تنظیم قرارداد پیمانکاری جزء (گچ‌کاری، سفت‌کاری)', url: 'https://claude.ai' }
+                ],
+                prompt: 'یک فرمول اکسل و جدول استاندارد برای محاسبه وزن شاخه‌های میلگرد آجدار ۱۲، ۱۴، ۱۶ و ۱۸ بر اساس فرمول (شعاع × شعاع × ۳.۱۴ × طول × ۷.۸۵) به همراه جمع کل تناژ بنویس.'
+            },
+
+            // ================= دسته ۷: خوراک، کافه، رستوران و خرده‌فروشی (۶ شغل) =================
+            {
+                id: 36,
+                title: 'سوپرمارکت‌ها و هایپرمارکت‌های محلی',
+                categoryId: 'cat-7',
+                categoryName: 'خوراک، کافه، رستوران و سوپرمارکت',
+                sector: 'فیزیکی',
+                useCase: 'مدیریت کالاهای نزدیک به تاریخ انقضا در اکسل، شناسایی اجناس پرفروش بر اساس حاشیه سود و نوشتن پیامک‌های تخفیف آخر هفته اهالی محله.',
+                tools: [
+                    { name: 'Formula Bot', desc: 'فرمول اکسل هشدار تاریخ انقضا و مغایرت صندوق', url: 'https://formulabot.com' },
+                    { name: 'Julius AI', desc: 'تحلیل فایل فروش و شناسایی کالاهای پرسود', url: 'https://julius.ai' },
+                    { name: 'Canva AI', desc: 'طراحی لیبل‌های تخفیف و استند حراجی مغازه', url: 'https://www.canva.com' },
+                    { name: 'ChatGPT', desc: 'نوشتن پیامک‌های جذاب تخفیف آخر هفته محلی', url: 'https://chatgpt.com' }
+                ],
+                prompt: '۳ نمونه پیامک کوتاه و جذاب برای ارسال به مشتریان محلی یک سوپرمارکت در روز چهارشنبه بنویس که تخفیف ویژه آخر هفته روی لبنیات، روغن و تنقلات و ارسال رایگان تلفنی را اعلام کند.'
+            },
+            {
+                id: 37,
+                title: 'کافه‌ها، باریستاها و آبمیوه/بستنی‌فروشی',
+                categoryId: 'cat-7',
+                categoryName: 'خوراک، کافه، رستوران و سوپرمارکت',
+                sector: 'فیزیکی',
+                useCase: 'طراحی منوی دیجیتال QR و پوستر نوشیدنی‌های فصلی، ایده‌پردازی رسپی موکتل‌ها و سیروپ‌های دست‌ساز جدید و ادیت ریلزهای کافه.',
+                tools: [
+                    { name: 'Ideogram.ai', desc: 'طراحی پوستر و استند نوشیدنی‌های ویژه کافه', url: 'https://ideogram.ai' },
+                    { name: 'ChefGPT', desc: 'ایده‌پردازی رسپی موکتل و نوشیدنی‌های ترکیبی', url: 'https://www.chefgpt.xyz' },
+                    { name: 'QRCode Monkey', desc: 'ساخت بارکد دائمی و رایگان برای منوی کافه', url: 'https://www.qrcode-monkey.com' },
+                    { name: 'CapCut', desc: 'ادیت ریلزهای اسلوموشن عصاره‌گیری قهوه', url: 'https://www.capcut.com' }
+                ],
+                prompt: '۵ رسپی خلاقانه و کم‌هزینه برای «موکتل‌های خنک تابستانی» با استفاده از میوه‌ها و عرقیجات در دسترس در ایران (مثل زعفران، بیدمشک، لیمو، نعناع و هندوانه) به همراه نام‌های جذاب کافه‌ای پیشنهاد بده.'
+            },
+            {
+                id: 38,
+                title: 'رستوران، فست‌فود، کترینگ و تهیه‌غذا',
+                categoryId: 'cat-7',
+                categoryName: 'خوراک، کافه، رستوران و سوپرمارکت',
+                sector: 'فیزیکی',
+                useCase: 'تبدیل عکس معمولی غذا با موبایل به عکس صنعتی و اشتهابرانگیز برای منوی اسنپ‌فود، و محاسبه دقیق بهای تمام‌شده هر پرس غذا (Cost Control).',
+                tools: [
+                    { name: 'Photoroom', desc: 'جذاب‌سازی پس‌زمینه عکس غذا برای اسنپ‌فود', url: 'https://www.photoroom.com' },
+                    { name: 'Flair.ai', desc: 'چیدمان روی میز چوبی برای عکس پیتزا و برگر', url: 'https://flair.ai' },
+                    { name: 'Julius AI', desc: 'محاسبه دقیق کاست‌کنترل و درصد دورریز مواد', url: 'https://julius.ai' },
+                    { name: 'Claude 3.5', desc: 'مهندسی منو و پاسخ به نظرات اسنپ‌فود', url: 'https://claude.ai' }
+                ],
+                prompt: 'جدول محاسبه بهای تمام‌شده (Food Cost) برای ۱ پرس چلوکباب کوبیده دو سیخ (شامل وزن گوشت، دنبه، پیاز، برنج، کره، دورچین، بسته‌بندی و ۲۵٪ سربار) را طوری بنویس که با تغییر قیمت گوشت، قیمت تمام‌شده آپدیت شود.'
+            },
+            {
+                id: 39,
+                title: 'قنادی، کیک‌پزی خانگی و شیرینی‌فروشی',
+                categoryId: 'cat-7',
+                categoryName: 'خوراک، کافه، رستوران و سوپرمارکت',
+                sector: 'هیبریدی',
+                useCase: 'طراحی تصویر سه‌بعدی کیک تولد و عروسی سفارشی طبق سلیقه مشتری قبل از پخت، و تبدیل مقیاس دقیق مواد اولیه برای قالب‌های مختلف.',
+                tools: [
+                    { name: 'Leonardo.ai', desc: 'خلق طرح‌های اختصاصی کیک تولد و عروسی', url: 'https://leonardo.ai' },
+                    { name: 'Bing Image Creator', desc: 'تصویرسازی مدل کیک فوندانت طبق تم مشتری', url: 'https://www.bing.com/images/create' },
+                    { name: 'ChefGPT / ChatGPT', desc: 'تبدیل مقادیر رسپی بر اساس قطر و ارتفاع قالب', url: 'https://chatgpt.com' },
+                    { name: 'Photoroom', desc: 'تمیز کردن پس‌زمینه عکس کیک در آشپزخانه', url: 'https://www.photoroom.com' }
+                ],
+                prompt: 'رسپی استاندارد من برای قالب گرد ۱۸ سانتی‌متری (وزن ۲ کیلوگرم) است. فرمول تبدیل دقیق وزن آرد، شکر، تخم‌مرغ و خامه را برای یک کیک دو طبقه با قطرهای ۲۰ و ۱۵ سانتی‌متر محاسبه کن.'
+            },
+            {
+                id: 40,
+                title: 'قصابی، پروتئینی، مرغ و ماهی',
+                categoryId: 'cat-7',
+                categoryName: 'خوراک، کافه، رستوران و سوپرمارکت',
+                sector: 'فیزیکی',
+                useCase: 'تولید ریلزهای آموزشی درباره تشخیص گوشت تازه و برش‌های استیک، و نوشتن رسپی‌های مرینیت گوشت و جوجه برای مشتریان محلی.',
+                tools: [
+                    { name: 'CapCut', desc: 'ادیت ویدیوهای آموزشی برش و مرینیت گوشت', url: 'https://www.capcut.com' },
+                    { name: 'Canva AI', desc: 'طراحی کارت دستور پخت و لیست قیمت روزانه', url: 'https://www.canva.com' },
+                    { name: 'ChatGPT', desc: 'تدوین رسپی‌های سس و مرینیت مخصوص پروتئینی', url: 'https://chatgpt.com' }
+                ],
+                prompt: '۵ دستور مرینیت (طعم‌دار کردن) خاص و متفاوت برای جوجه‌کباب و بال کبابی (مثل مرینیت маست و زعفران، تند مکزیکی، انار و گردو، سیر و کره) با مقادیر دقیق برای هر ۱ کیلوگرم مرغ بنویس.'
+            },
+            {
+                id: 41,
+                title: 'عطاری و فروشندگان گیاهان دارویی و ادویه',
+                categoryId: 'cat-7',
+                categoryName: 'خوراک، کافه، رستوران و سوپرمارکت',
+                sector: 'هیبریدی',
+                useCase: 'بررسی علمی خواص، دوز مجاز و تداخلات گیاهان دارویی با داروهای شیمیایی، و طراحی لیبل‌های سنتی شیک برای بسته‌بندی دمنوش‌ها.',
+                tools: [
+                    { name: 'Perplexity AI', desc: 'بررسی علمی خواص و تداخلات گیاهان دارویی', url: 'https://www.perplexity.ai' },
+                    { name: 'Ideogram.ai', desc: 'طراحی لیبل‌های سنتی برای شیشه ادویه و دمنوش', url: 'https://ideogram.ai' },
+                    { name: 'Notion AI', desc: 'ساخت بانک اطلاعاتی ترکیبات و نسخه‌های گیاهی', url: 'https://www.notion.so' },
+                    { name: 'Claude 3.5', desc: 'تولید محتوای آموزشی خواص ادویه‌ها برای پیج', url: 'https://claude.ai' }
+                ],
+                prompt: 'یک جدول راهنمای کامل برای مشتریان عطاری بنویس که ۵ دمنوش ترکیبی برای «کاهش استرس و بهبود خواب شبانه» را به همراه نسبت ترکیب، زمان دم کشیدن و موارد منع مصرف (مثلاً فشار خون یا بارداری) نشان دهد.'
+            },
+
+            // ================= دسته ۸: زیبایی، مد، پوشاک و سلامت فردی (۵ شغل) =================
+            {
+                id: 42,
+                title: 'سالن‌های زیبایی زنانه (رنگ، کراتین و میکاپ)',
+                categoryId: 'cat-8',
+                categoryName: 'زیبایی، آرایشگاه، مد و باشگاه',
+                sector: 'فیزیکی',
+                useCase: 'تست مجازی رنگ مو و سبک میکاپ روی عکس چهره مشتری قبل از شروع کار، اتوماسیون رزرو نوبت در دایرکت و ادیت ویدیوهای تغییر چهره.',
+                tools: [
+                    { name: 'YouCam Web AI', desc: 'تست مجازی رنگ مو و میکاپ روی چهره مشتری', url: 'https://www.perfectcorp.com/consumer/blog/hair/virtual-hair-color-try-on' },
+                    { name: 'ManyChat', desc: 'ارسال خودکار لیست قیمت و شرایط بیعانه در دایرکت', url: 'https://manychat.com' },
+                    { name: 'Krea.ai', desc: 'افزایش کیفیت و وضوح عکس تارهای مو و کراتین', url: 'https://krea.ai' },
+                    { name: 'CapCut', desc: 'ساخت ریلزهای ترند Before/After میکاپ و رنگ', url: 'https://www.capcut.com' }
+                ],
+                prompt: 'فرم مشاوره اولیه و متن پیامک «مراقبت‌های حیاتی بعد از کراتین و پروتئین‌تراپی مو» (شامل نوع شامپو، نحوه خشک کردن و زمان رنگ کردن مجدد) را برای ارسال به واتساپ مشتری بنویس.'
+            },
+            {
+                id: 43,
+                title: 'ناخن‌کاران، مژه‌کاران و تتو آرتیست‌ها',
+                categoryId: 'cat-8',
+                categoryName: 'زیبایی، آرایشگاه، مد و باشگاه',
+                sector: 'فیزیکی',
+                useCase: 'تولید طرح‌های اورجینال دیزاین ناخن و طرح‌های تتوی مینیمال و خطی اختصاصی برای هر مشتری در چند ثانیه، و تمیز کردن پس‌زمینه عکس دست.',
+                tools: [
+                    { name: 'Ideogram.ai', desc: 'طراحی طرح‌های تتوی مینیمال و خطی اختصاصی', url: 'https://ideogram.ai' },
+                    { name: 'Bing Image Creator', desc: 'ایده‌پردازی دیزاین و فرنچ ناخن فصلی', url: 'https://www.bing.com/images/create' },
+                    { name: 'Photoroom', desc: 'تمیز کردن پس‌زمینه عکس کلوزآپ ناخن و مژه', url: 'https://www.photoroom.com' },
+                    { name: 'Krea.ai', desc: 'رتوش و افزایش وضوح عکس نمونه کار مژه', url: 'https://krea.ai' }
+                ],
+                prompt: 'پرامپت انگلیسی برای تولید ۴ طرح تتوی خطی بسیار ظریف و مینیمال (Fine Line Tattoo) با ترکیب نماد ماه، موج دریا و گل رز روی پس‌زمینه سفید کاغذ برای نشان دادن به مشتری بنویس.'
+            },
+            {
+                id: 44,
+                title: 'آرایشگاه‌های مردانه (پیرایشگر و باربرشاپ)',
+                categoryId: 'cat-8',
+                categoryName: 'زیبایی، آرایشگاه، مد و باشگاه',
+                sector: 'فیزیکی',
+                useCase: 'شبیه‌سازی مدل مو (فید، کراپ، کلاسیک) و فرم ریش متناسب با زاویه فک و صورت مشتری قبل از کوتاهی، و ساخت کلیپ‌های ریتمیک اینستاگرام.',
+                tools: [
+                    { name: 'Remaker AI / Hairstyle', desc: 'تست مجازی مدل مو و ریش روی عکس مشتری', url: 'https://remaker.ai' },
+                    { name: 'CapCut', desc: 'ادیت ریتمیک ویدیوهای فید مو و گریم داماد', url: 'https://www.capcut.com' },
+                    { name: 'Photoroom', desc: 'تار کردن پس‌زمینه شلوغ آرایشگاه در عکس پرتره', url: 'https://www.photoroom.com' },
+                    { name: 'ChatGPT', desc: 'تنظیم پیامک یادآوری اصلاح ماهانه مشتریان', url: 'https://chatgpt.com' }
+                ],
+                prompt: 'راهنمای انتخاب مدل کوتاهی مو و خط ریش متناسب با ۴ فرم صورت مردانه (گرد، کشیده، مربعی، بیضی) را برای ساخت یک هایلایت آموزشی در پیج آرایشگاه مردانه بنویس.'
+            },
+            {
+                id: 45,
+                title: 'خیاطان، مزون‌های لباس و تولیدی‌های پوشاک',
+                categoryId: 'cat-8',
+                categoryName: 'زیبایی، آرایشگاه، مد و باشگاه',
+                sector: 'هیبریدی',
+                useCase: 'تبدیل اسکچ مدادی لباس روی کاغذ به عکس واقعی دوخته‌شده با پارچه‌های مختلف قبل از برش پارچه، و نمایش تن‌خور بدون مدل.',
+                tools: [
+                    { name: 'The New Black AI', desc: 'طراحی تخصصی کالکشن لباس و مد با هوش مصنوعی', url: 'https://thenewblack.ai' },
+                    { name: 'PromeAI', desc: 'تبدیل اسکچ مدادی خیاط به عکس واقعی لباس', url: 'https://www.promeai.pro' },
+                    { name: 'FitRoom', desc: 'نمایش تن‌خور لباس دوخته‌شده روی مانکن مجازی', url: 'https://fitroom.app' },
+                    { name: 'Leonardo.ai', desc: 'طراحی پترن پارچه و برش‌های مانتو مجلسی', url: 'https://leonardo.ai' }
+                ],
+                prompt: 'جدول استاندارد متراژ پارچه مورد نیاز (با عرض ۱۵۰ سانتی‌متر) برای دوخت مانتو کتی، شومیز، شلوار دمپا گشاد و پالتو در سایزهای ۳۸ تا ۴۸ را به همراه نکات جلوگیری از پرتی پارچه بنویس.'
+            },
+            {
+                id: 46,
+                title: 'مربیان باشگاه بدنسازی، فیتنس و پیلاتس',
+                categoryId: 'cat-8',
+                categoryName: 'زیبایی، آرایشگاه، مد و باشگاه',
+                sector: 'هیبریدی',
+                useCase: 'طراحی برنامه تمرینی و رژیم غذایی شخصی‌سازی‌شده با محاسبه کالری و ماکروها (پروتئین، کربوهیدرات) و تبدیل آن به فایل PDF گرافیکی شیک.',
+                tools: [
+                    { name: 'Claude 3.5 Sonnet', desc: 'تنظیم برنامه تمرینی و محاسبه ماکروهای غذایی', url: 'https://claude.ai' },
+                    { name: 'Gamma.app', desc: 'تبدیل برنامه تمرینی به فایل PDF و اسلاید شیک', url: 'https://gamma.app' },
+                    { name: 'CapCut', desc: 'ادیت ویدیوهای آموزش فرم صحیح حرکات ورزشی', url: 'https://www.capcut.com' },
+                    { name: 'Tally.so', desc: 'فرم آنلاین دریافت اطلاعات بدنی و آسیب‌دیدگی شاگرد', url: 'https://tally.so' }
+                ],
+                prompt: 'یک برنامه تمرینی ۴ روز در هفته (Upper/Lower Split) برای شاگرد خانم با قد ۱۶۵، وزن ۷۲ کیلوگرم که دچار درد خفیف زانو است طراحی کن و برای حرکات سنگین پا جایگزین ایمن قرار بده.'
+            },
+
+            // ================= دسته ۹: آموزش، مشاوره، وکالت و سلامت (۵ شغل) =================
+            {
+                id: 47,
+                title: 'معلمان مدارس، مدرسان کنکور و اساتید دانشگاه',
+                categoryId: 'cat-9',
+                categoryName: 'آموزش، وکالت، پزشکی و مشاوره',
+                sector: 'هیبریدی',
+                useCase: 'ساخت خودکار پاورپوینت و اسلایدهای درسی از روی متن در ۶۰ ثانیه، و طراحی آزمون‌های چهارگزینه‌ای و تشریحی استاندارد از روی فایل PDF جزوه.',
+                tools: [
+                    { name: 'Gamma.app', desc: 'ساخت پاورپوینت و اسلاید درسی در ۶۰ ثانیه', url: 'https://gamma.app' },
+                    { name: 'QuestionWell', desc: 'طراحی خودکار سوال تستی از روی متن درس', url: 'https://www.questionwell.org' },
+                    { name: 'NotebookLM', desc: 'تبدیل جزوه و کتاب به خلاصه درس و پادکست', url: 'https://notebooklm.google' },
+                    { name: 'Quizgecko', desc: 'ساخت آزمون آنلاین و فلش‌کارت آموزشی', url: 'https://quizgecko.com' }
+                ],
+                prompt: 'از متن درسی زیر، ۵ سوال چهارگزینه‌ای مفهومی در سطح کنکور سراسری (شامل صورت سوال، ۴ گزینه نزدیک به هم، گزینه صحیح و پاسخ تشریحی کامل) طراحی کن: [متن درس]'
+            },
+            {
+                id: 48,
+                title: 'مدرسان زبان‌های خارجی (انگلیسی، آلمانی، آیلتس)',
+                categoryId: 'cat-9',
+                categoryName: 'آموزش، وکالت، پزشکی و مشاوره',
+                sector: 'هیبریدی',
+                useCase: 'ساخت تمرین‌های گرامر، ریدینگ، Fill in the blanks و دیالوگ در ۳۰ ثانیه، تصحیح رایتینگ آیلتس زبان‌آموزان و تولید فایل صوتی لیسنینگ.',
+                tools: [
+                    { name: 'Twee.com', desc: 'ابزار تخصصی و رایگان معلمان زبان برای ساخت تمرین', url: 'https://twee.com' },
+                    { name: 'Claude 3.5', desc: 'تصحیح دقیق رایتینگ آیلتس با نمره‌دهی ۴ معیار', url: 'https://claude.ai' },
+                    { name: 'ElevenLabs', desc: 'تولید فایل صوتی لیسنینگ با لهجه‌های بریتیش/امریکن', url: 'https://elevenlabs.io' },
+                    { name: 'Quizlet AI', desc: 'ساخت فلش‌کارت‌های هوشمند مرور لغات', url: 'https://quizlet.com' }
+                ],
+                prompt: 'این متن Writing Task 2 آیلتس زبان‌آموز من را بر اساس ۴ معیار رسمی (TR, CC, LR, GRA) تصحیح کن، خطاهای گرامری را در جدول نشان بده و یک نسخه بازنویسی‌شده Band 7.5+ از همان متن بنویس.'
+            },
+            {
+                id: 49,
+                title: 'وکلا، مشاوران حقوقی و دفاتر اسناد رسمی',
+                categoryId: 'cat-9',
+                categoryName: 'آموزش، وکالت، پزشکی و مشاوره',
+                sector: 'فیزیکی',
+                useCase: 'تنظیم پیش‌نویس قراردادهای مشارکت، پیمانکاری، لایحه دفاعیه و اظهارنامه، و جستجو در میان صدها صفحه پرونده و قوانین برای یافتن تناقضات.',
+                tools: [
+                    { name: 'NotebookLM', desc: 'بارگذاری PDF پرونده و قوانین و پرسش‌وپاسخ دقیق', url: 'https://notebooklm.google' },
+                    { name: 'Claude 3.5 Sonnet', desc: 'نگارش پیش‌نویس قراردادهای حقوقی و لایحه دفاعیه', url: 'https://claude.ai' },
+                    { name: 'Perplexity AI', desc: 'جستجوی آراء وحدت رویه دیوان عالی و مواد قانونی', url: 'https://www.perplexity.ai' },
+                    { name: 'Google Lens', desc: 'تبدیل دست‌نویس‌ها و اوراق قضایی به متن تایپی', url: 'https://lens.google' }
+                ],
+                prompt: 'پیش‌نویس یک «قرارداد مشارکت در ساخت» جامع و متوازن مطابق قوانین مدنی ایران تنظیم کن که شامل بندهای تضامین طرفین، جدول زمان‌بندی، شرایط فورس‌ماژور، داوری و وجه التزام تاخیر تحویل باشد.'
+            },
+            {
+                id: 50,
+                title: 'روانشناسان، مشاوران خانواده و کوچ‌های فردی',
+                categoryId: 'cat-9',
+                categoryName: 'آموزش، وکالت، پزشکی و مشاوره',
+                sector: 'هیبریدی',
+                useCase: 'سازمان‌دهی منابع علمی و خلاصه کتاب‌های تخصصی، ساخت کاربرگ‌های تمرین درمانی (CBT/ACT) برای مراجعان و ضبط فایل‌های صوتی آرام‌سازی.',
+                tools: [
+                    { name: 'NotebookLM', desc: 'خلاصه‌سازی کتاب‌های رفرنس روانشناسی و مقالات', url: 'https://notebooklm.google' },
+                    { name: 'Gamma.app', desc: 'طراحی کاربرگ‌های تمرین مراجع و اسلاید کارگاه', url: 'https://gamma.app' },
+                    { name: 'Adobe Podcast', desc: 'ضبط ویس‌های مدیتیشن و آموزشی با صدای استودیویی', url: 'https://podcast.adobe.com/enhance' },
+                    { name: 'Consensus.app', desc: 'جستجوی یافته‌های علمی در پژوهش‌های روانشناسی', url: 'https://consensus.app' }
+                ],
+                prompt: 'یک کاربرگ (Worksheet) کاربردی و ساده بر اساس رویکرد CBT برای مراجعی که دچار «نشخوار فکری و کمال‌گرایی منفی در محیط کار» است طراحی کن تا در طول هفته در منزل تکمیل کند.'
+            },
+            {
+                id: 51,
+                title: 'پزشکان، دندانپزشکان و کلینیک‌های زیبایی',
+                categoryId: 'cat-9',
+                categoryName: 'آموزش، وکالت، پزشکی و مشاوره',
+                sector: 'فیزیکی',
+                useCase: 'جستجوی سریع در آخرین مقالات علمی PubMed، اتوماسیون پاسخگویی به سوالات مراقبت بعد از عمل در اینستاگرام و طراحی بروشور آموزش بیمار.',
+                tools: [
+                    { name: 'Consensus.app', desc: 'موتور جستجوی هوش مصنوعی در مقالات پزشکی معتبر', url: 'https://consensus.app' },
+                    { name: 'Perplexity AI', desc: 'بررسی آخرین گایدلاین‌ها و پژوهش‌های بالینی', url: 'https://www.perplexity.ai' },
+                    { name: 'ManyChat', desc: 'ارسال خودکار راهنمای مراقبت بعد از درمان به بیمار', url: 'https://manychat.com' },
+                    { name: 'Gamma.app', desc: 'طراحی اسلایدهای کنفرانس و پمفلت آموزش بیمار', url: 'https://gamma.app' }
+                ],
+                prompt: 'یک بروشور راهنمای بسیار شفاف و آرامش‌بخش درباره «مراقبت‌های قبل و ۷۲ ساعت بعد از کاشت ایمپلنت دندان» (شامل تغذیه، نحوه مسواک زدن، داروهای مسکن و علائم هشدار) برای بیماران کلینیک بنویس.'
+            },
+
+            // ================= دسته ۱۰: حمل‌ونقل، لجستیک و سفر (۳ شغل) =================
+            {
+                id: 52,
+                title: 'رانندگان تاکسی اینترنتی (اسنپ و تپسی) و برون‌شهری',
+                categoryId: 'cat-10',
+                categoryName: 'حمل‌ونقل، پیک، پخش و گردشگری',
+                sector: 'فیزیکی',
+                useCase: 'مسیریابی هوشمند با پیش‌بینی ترافیک لحظه‌ای، محاسبه دقیق سود خالص روزانه پس از کسر استهلاک واقعی به ازای هر کیلومتر و تایپ صوتی.',
+                tools: [
+                    { name: 'نشان / Waze AI', desc: 'مسیریابی هوشمند با پیش‌بینی ترافیک و دوربین‌ها', url: 'https://neshan.org' },
+                    { name: 'Formula Bot', desc: 'محاسبه دقیق سود خالص با کسر استهلاک کیلومتری', url: 'https://formulabot.com' },
+                    { name: 'Futo / Gboard Voice', desc: 'تایپ صوتی دقیق فارسی بدون دست زدن به گوشی', url: 'https://keyboard.futo.org' },
+                    { name: 'Perplexity AI', desc: 'عیب‌یابی فوری صداها یا چراغ‌های هشدار پشت آمپر', url: 'https://www.perplexity.ai' }
+                ],
+                prompt: 'من روزانه ۲۲۰ کیلومتر در شهر با خودروی سمند کار می‌کنم. یک جدول محاسبه هزینه واقعی هر کیلومتر پیمایش (شامل بنزین، روغن هر ۵۰۰۰ کیلومتر، لاستیک هر ۴۰ هزار کیلومتر، لنت و دیسک‌وصفحه) بنویس تا سود خالص واقعی روزانه‌ام مشخص شود.'
+            },
+            {
+                id: 53,
+                title: 'پیک‌های موتوری، موزعین پخش مویرگی و وانت‌بار',
+                categoryId: 'cat-10',
+                categoryName: 'حمل‌ونقل، پیک، پخش و گردشگری',
+                sector: 'فیزیکی',
+                useCase: 'وارد کردن ۱۰ تا ۲۰ آدرس تحویل مرسوله روی نقشه و چیدمان خودکار کوتاه‌ترین ترتیب مسیر برای صرفه‌جویی ۳۰ درصدی در زمان و سوخت.',
+                tools: [
+                    { name: 'Circuit Route Planner', desc: 'چیدمان هوشمند ترتیب چند مقصد برای کوتاه‌ترین مسیر', url: 'https://getcircuit.com' },
+                    { name: 'MapQuest Route', desc: 'بهینه‌سازی رایگان ترتیب تا ۲۶ آدرس تحویل بار', url: 'https://www.mapquest.com/routeplanner' },
+                    { name: 'Google Lens', desc: 'خواندن سریع آدرس و کد پستی از روی برچسب بسته', url: 'https://lens.google' }
+                ],
+                prompt: 'برای یک موزع پخش مویرگی که روزانه باید به ۱۸ سوپرمارکت در ۳ منطقه شهری سر بزند و بار تحویل دهد، بهترین چک‌لیست زمان‌بندی صبح تا عصر و مدیریت تسویه‌حساب فاکتورها چیست؟'
+            },
+            {
+                id: 54,
+                title: 'آژانس‌های مسافرتی، اقامتگاه‌های بوم‌گردی و تورلیدرها',
+                categoryId: 'cat-10',
+                categoryName: 'حمل‌ونقل، پیک، پخش و گردشگری',
+                sector: 'هیبریدی',
+                useCase: 'طراحی برنامه سفر دقیقه به دقیقه برای مسافران، ترجمه راهنمای بوم‌گردی به انگلیسی و عربی برای توریست‌ها و ساخت ریلزهای گردشگری.',
+                tools: [
+                    { name: 'Mindtrip AI', desc: 'طراحی برنامه سفر هوشمند دقیقه به دقیقه روی نقشه', url: 'https://mindtrip.ai' },
+                    { name: 'Claude 3.5', desc: 'نوشتن پکیج‌های تور و ترجمه به انگلیسی و عربی', url: 'https://claude.ai' },
+                    { name: 'CapCut', desc: 'ادیت ریلزهای جذاب معرفی اقامتگاه بوم‌گردی', url: 'https://www.capcut.com' },
+                    { name: 'Canva AI', desc: 'طراحی بروشور و پوستر تورهای آخر هفته', url: 'https://www.canva.com' }
+                ],
+                prompt: 'یک برنامه سفر ۳ روزه کامل و جذاب (ساعت به ساعت شامل جاذبه‌های کمتر دیده‌شده، غذاهای محلی و بازارگردی) برای تور پاییزی شیراز و اطراف آن تنظیم کن که برای فروش پکیج توریستی استفاده شود.'
+            },
+
+            // ================= دسته ۱۱: خدمات مالی، اداری و دفتری (۳ شغل) =================
+            {
+                id: 55,
+                title: 'حسابداران، حسابرسان و مشاوران مالیاتی',
+                categoryId: 'cat-11',
+                categoryName: 'حسابداری، ترید و کافی‌نت',
+                sector: 'هیبریدی',
+                useCase: 'تبدیل توضیحات فارسی به فرمول‌های پیچیده اکسل (XLOOKUP, SUMIFS) و ماکروهای VBA، مغایرت‌گیری بانکی و بررسی بخشنامه‌های سامانه مؤدیان.',
+                tools: [
+                    { name: 'Formula Bot', desc: 'تولید فرمول‌های پیچیده اکسل و کدهای VBA', url: 'https://formulabot.com' },
+                    { name: 'Julius AI', desc: 'مغایرت‌گیری خودکار فایل‌های اکسل و صورت‌حساب', url: 'https://julius.ai' },
+                    { name: 'NotebookLM', desc: 'بارگذاری PDF قوانین مالیاتی و سامانه مؤدیان', url: 'https://notebooklm.google' },
+                    { name: 'Rows.com AI', desc: 'ساخت گزارش‌ها و داشبوردهای مالی خودکار', url: 'https://rows.com' }
+                ],
+                prompt: 'یک فرمول اکسل و اسکریپت VBA بنویس که دو شیت «ریز تراکنش‌های بانک» و «دفتر معین شرکت» را با هم مقایسه کند و تمام مبالغی که با هم تطابق ندارند را در یک شیت سوم به نام Discrepancies لیست کند.'
+            },
+            {
+                id: 56,
+                title: 'تریدرها و تحلیلگران بازارهای مالی (رمزارز، فارکس و بورس)',
+                categoryId: 'cat-11',
+                categoryName: 'حسابداری، ترید و کافی‌نت',
+                sector: 'آنلاین',
+                useCase: 'تحلیل لحظه‌ای اخبار اقتصاد کلان و نرخ بهره، نوشتن و ویرایش کد اندیکاتورها و استراتژی‌ها به زبان Pine Script برای TradingView و ثبت ژورنال.',
+                tools: [
+                    { name: 'Perplexity Finance', desc: 'تحلیل لحظه‌ای اخبار اقتصاد کلان و گزارش‌های مالی', url: 'https://www.perplexity.ai/finance' },
+                    { name: 'Claude 3.5 Sonnet', desc: 'کدنویسی دقیق اندیکاتورهای Pine Script v5 در تریدینگ‌ویو', url: 'https://claude.ai' },
+                    { name: 'NotebookLM', desc: 'خلاصه‌سازی وایت‌پیپر پروژه‌ها و گزارش‌های کدال', url: 'https://notebooklm.google' },
+                    { name: 'Julius AI', desc: 'تحلیل آماری وین‌ریت (Win Rate) ژورنال معاملاتی', url: 'https://julius.ai' }
+                ],
+                prompt: 'یک کد کامل و بدون خطای Pine Script نسخه ۵ برای سایت TradingView بنویس که واگرایی (Divergence) بین اندیکاتور RSI و قیمت را در تایم‌فریم ۱۵ دقیقه تشخیص دهد و روی چارت فلش Buy/Sell بزند.'
+            },
+            {
+                id: 57,
+                title: 'کافی‌نت‌ها، دفاتر پیشخوان دولت و تایپ و تکثیر',
+                categoryId: 'cat-11',
+                categoryName: 'حسابداری، ترید و کافی‌نت',
+                sector: 'فیزیکی',
+                useCase: 'تبدیل رایگان عکس صفحات کتاب و دست‌نویس‌های فارسی به متن قابل ویرایش Word در ۳ ثانیه (OCR)، و تبدیل عکس سلفی مشتری به عکس پرسنلی ۳×۴.',
+                tools: [
+                    { name: 'Google Lens OCR', desc: 'تبدیل ۱۰۰٪ دقیق عکس و دست‌نویس فارسی به متن Word', url: 'https://lens.google' },
+                    { name: 'Cutout.pro Passport', desc: 'تبدیل عکس معمولی مشتری به عکس پرسنلی ۳×۴ با کت‌وشلوار', url: 'https://www.cutout.pro/passport-photo-maker' },
+                    { name: 'Photoroom', desc: 'سفید کردن پس‌زمینه عکس مدارک و پرسنلی', url: 'https://www.photoroom.com' },
+                    { name: 'TinyWow AI', desc: 'مجموعه کامل ابزارهای رایگان ویرایش و تبدیل PDF', url: 'https://tinywow.com' }
+                ],
+                prompt: 'متن استخراج‌شده از OCR زیر دارای غلط‌های املایی و به‌هم‌ریختگی علائم نگارشی است. بدون تغییر یا حذف هیچ کلمه‌ای، آن را به صورت یک نامه اداری رسمی، ویراستاری و پاراگراف‌بندی کن: [متن خام]'
+            },
+
+            // ================= دسته ۱۲: خدمات شهری، کشاورزی و مشاغل خرد (۳ شغل) =================
+            {
+                id: 58,
+                title: 'گل‌فروشی‌ها، باغچه‌آرایی و گیاهان آپارتمانی',
+                categoryId: 'cat-12',
+                categoryName: 'گل‌فروشی، پت‌شاپ و خدمات شهری',
+                sector: 'فیزیکی',
+                useCase: 'تشخیص فوری نام گیاه و علت زرد شدن یا آفت برگ گیاهان مشتریان از روی یک عکس موبایل، و طراحی شناسنامه نگهداری و کارت تبریک.',
+                tools: [
+                    { name: 'PlantNet AI', desc: 'تشخیص رایگان نام و گونه گیاهان از روی عکس برگ', url: 'https://identify.plantnet.org' },
+                    { name: 'Perplexity / Gemini', desc: 'تشخیص بیماری و کمبود کود گیاه از روی عکس برگ زرد', url: 'https://gemini.google.com' },
+                    { name: 'Ideogram.ai', desc: 'طراحی کارت پستال تبریک و لیبل نگهداری گلدان', url: 'https://ideogram.ai' },
+                    { name: 'Canva AI', desc: 'طراحی کاتالوگ دسته‌گل‌های مناسبتی و باکس گل', url: 'https://www.canva.com' }
+                ],
+                prompt: 'یک کارت «شناسنامه نگهداری گیاه سانسوریا و زامیفولیا» به زبان بسیار ساده شامل میزان نور، فاصله زمانی آبیاری در تابستان و زمستان، نوع خاک و کود مناسب برای چاپ و چسباندن روی گلدان‌های مغازه بنویس.'
+            },
+            {
+                id: 59,
+                title: 'پت‌شاپ‌ها و کلینیک‌های دامپزشکی',
+                categoryId: 'cat-12',
+                categoryName: 'گل‌فروشی، پت‌شاپ و خدمات شهری',
+                sector: 'هیبریدی',
+                useCase: 'ساخت جدول زمان‌بندی واکسیناسیون و دوز ضدانگل سگ و گربه، عکاسی جذاب از لوازم و غذای پت برای اینستاگرام و پاسخ خودکار به استعلام قیمت.',
+                tools: [
+                    { name: 'Photoroom', desc: 'عکاسی جذاب از غذای خشک و لوازم پت برای سایت و پیج', url: 'https://www.photoroom.com' },
+                    { name: 'ManyChat', desc: 'پاسخ خودکار به استعلام قیمت غذای خشک و تشویقی', url: 'https://manychat.com' },
+                    { name: 'Claude 3.5', desc: 'تهیه جداول راهنمای تغذیه و واکسیناسیون نژادها', url: 'https://claude.ai' },
+                    { name: 'CapCut', desc: 'ادیت ریلزهای بامزه حیوانات خانگی برای جذب فالوور', url: 'https://www.capcut.com' }
+                ],
+                prompt: 'یک جدول کامل از «مواد غذایی و خوراکی‌های خانگی سمی و خطرناک برای سگ‌ها و گربه‌ها» (مثل شکلات، انگور، پیاز، زایلیتول) به همراه علائم مسمومیت برای انتشار در پیج اینستاگرام پت‌شاپ بنویس.'
+            },
+            {
+                id: 60,
+                title: 'قالیشویی، مبل‌شویی، خشکشویی و خدمات نظافت',
+                categoryId: 'cat-12',
+                categoryName: 'گل‌فروشی، پت‌شاپ و خدمات شهری',
+                sector: 'فیزیکی',
+                useCase: 'ساخت ویدیوهای رضایت مشتری و فرآیند شستشوی مکانیزه فرش، چیدمان بهینه مسیر وانت‌های جمع‌آوری فرش در شهر و پیامک‌های تخفیف خانه‌تکانی.',
+                tools: [
+                    { name: 'CapCut', desc: 'ساخت کلیپ‌های جذاب شستشوی فرش و مبل (Before/After)', url: 'https://www.capcut.com' },
+                    { name: 'Circuit Route Planner', desc: 'چیدمان بهینه مسیر وانت‌های جمع‌آوری و تحویل فرش', url: 'https://getcircuit.com' },
+                    { name: 'ChatGPT', desc: 'نوشتن پیامک‌های تخفیف فصلی و راهنمای لکه‌بری فوری', url: 'https://chatgpt.com' },
+                    { name: 'Canva AI', desc: 'طراحی تراکت، فاکتور دیجیتال و لیست تعرفه شستشو', url: 'https://www.canva.com' }
+                ],
+                prompt: 'یک راهنمای کاربردی «واکنش فوری در ۵ دقیقه اول پس از ریختن چای، قهوه، جوهر و چربی روی فرش دستباف و ماشینی» بنویس که در انتها توصیه کند برای جلوگیری از تداخل رنگ از خدمات قالیشویی استفاده کنند.'
+            }
+        ];
+
+        // AI Tools Master Directory Categorized (for the 3rd Tab)
+        const aiDirectoryCategories = [
+            {
+                title: '🎨 عکاسی محصول، آنلاین‌شاپ، مد و گرافیک',
+                subtitle: 'ابزارهای حذف پس‌زمینه، تن‌خور مجازی لباس، طراحی لوگو و ارتقای کیفیت عکس تا 4K',
+                tools: [
+                    { name: 'Photoroom', use: 'حذف پس‌زمینه و ساخت عکس محصول استاندارد دیجی‌کالا و اینستاگرام', url: 'https://www.photoroom.com' },
+                    { name: 'FitRoom', use: 'پوشاندن مجازی مانتو و لباس روی مانکن‌های هوش مصنوعی', url: 'https://fitroom.app' },
+                    { name: 'Pebblely', use: 'قرار دادن کفش، کیف، شمع و دکوری در صحنه‌های طبیعی (۴۰ عکس رایگان)', url: 'https://pebblely.com' },
+                    { name: 'Flair.ai', use: 'استودیوی عکاسی مجازی برای بطری، عطر، کرم و بسته‌بندی', url: 'https://flair.ai' },
+                    { name: 'Ideogram 2.0', use: 'بهترین هوش مصنوعی رایگان برای طراحی لوگو، لیبل و تایپوگرافی دقیق', url: 'https://ideogram.ai' },
+                    { name: 'Recraft.ai', use: 'تولید فایل‌های وکتور قابل ویرایش (SVG)، آیکون و تصویرسازی', url: 'https://www.recraft.ai' },
+                    { name: 'Krea.ai', use: 'افزایش کیفیت و شفافیت عکس‌های تار موبایل، چهره و جواهرات', url: 'https://krea.ai' },
+                    { name: 'Clipdrop Relight', use: 'نورپردازی مجدد چهره و محصولات پس از عکاسی و حذف اشیاء اضافه', url: 'https://clipdrop.co' }
+                ]
+            },
+            {
+                title: '💻 طراحی سایت، وردپرس و برنامه‌نویسی',
+                subtitle: 'تبدیل متن به رابط کاربری، ساخت وب‌اپلیکیشن، وایرفریم و دیباگ کدها',
+                tools: [
+                    { name: 'v0.dev', use: 'تولید رابط کاربری مدرن و کدهای React/Tailwind/HTML از روی متن', url: 'https://v0.dev' },
+                    { name: 'Bolt.new', use: 'طراحی، کدنویسی و اجرای کامل وب‌اپلیکیشن مستقیماً در مرورگر', url: 'https://bolt.new' },
+                    { name: 'Lovable.dev', use: 'ساخت سریع اپلیکیشن‌ها و داشبوردهای وب بدون نیاز به کدنویسی سنگین', url: 'https://lovable.dev' },
+                    { name: 'Relume AI', use: 'تولید نقشه سایت (Sitemap) و وایرفریم کامل صفحات در ۶۰ ثانیه', url: 'https://www.relume.io' },
+                    { name: 'Cursor IDE', use: 'محیط کدنویسی هوشمند برای برنامه‌نویسان و طراحان وردپرس', url: 'https://cursor.com' },
+                    { name: 'GitHub Copilot Free', use: 'نسخه رایگان دستیار کدنویسی گیت‌هاب در VS Code', url: 'https://github.com/features/copilot' }
+                ]
+            },
+            {
+                title: '🏢 ساختمان، کابینت‌سازی، دکوراسیون و املاک',
+                subtitle: 'چیدمان مجازی خانه‌های خالی، رندر فوری کابینت و بازطراحی فضای داخلی',
+                tools: [
+                    { name: 'PromeAI', use: 'تبدیل عکس آشپزخانه خام یا اسکچ دستی به رندر سه‌بعدی کابینت و نما', url: 'https://www.promeai.pro' },
+                    { name: 'REimagineHome', use: 'چیدمان مجازی مبلمان در عکس آپارتمان‌های خالی برای مشاوران املاک', url: 'https://www.reimaginehome.ai' },
+                    { name: 'Spacely AI', use: 'رندر دکوراسیون داخلی حرفه‌ای بدون واترمارک (دارای کردیت رایگان)', url: 'https://www.spacely.ai' },
+                    { name: 'MyArchitectAI', use: 'موتور رندر سریع برای نجاران، کابینت‌سازان و معماران', url: 'https://www.myarchitectai.com' },
+                    { name: 'Planner 5D', use: 'طراحی پلان دوبعدی و سه‌بعدی چیدمان منزل و آشپزخانه', url: 'https://planner5d.com' }
+                ]
+            },
+            {
+                title: '🎬 ویدیو، ریلز اینستاگرام، صدا و یوتیوب',
+                subtitle: 'زیرنویس خودکار فارسی، حذف نویز صدا، برش کلیپ وایرال و اتوماسیون دایرکت',
+                tools: [
+                    { name: 'CapCut Web/App', use: 'تدوین ریلز، زیرنویس خودکار فارسی، پرده سبز و افکت‌های ترند', url: 'https://www.capcut.com' },
+                    { name: 'Adobe Podcast Enhance', use: 'حذف ۱۰۰٪ رایگان نویز محیط و تبدیل صدای موبایل به صدای استودیویی', url: 'https://podcast.adobe.com/enhance' },
+                    { name: 'ManyChat', use: 'ارسال خودکار قیمت و لینک در دایرکت اینستاگرام با کامنت کردن یک کلمه', url: 'https://manychat.com' },
+                    { name: 'OpusClip', use: 'تبدیل خودکار ویدیوهای طولانی یوتیوب به ۱۰ کلیپ کوتاه عمودی', url: 'https://www.opus.pro' },
+                    { name: 'ElevenLabs', use: 'تولید نریشن طبیعی و افکت‌های صوتی (۱۰ هزار کاراکتر رایگان ماهانه)', url: 'https://elevenlabs.io' },
+                    { name: 'VidIQ Free', use: 'پیدا کردن کلمات کلیدی پرسرچ و ایده ویدیوی یوتیوب', url: 'https://vidiq.com' }
+                ]
+            },
+            {
+                title: '⚙️ عیب‌یابی فنی، خودرو، اکسل، مالی و لجستیک',
+                subtitle: 'کدهای خطای دیاگ خودرو و پکیج، فرمول‌نویسی اکسل، مسیریابی پخش و آموزش',
+                tools: [
+                    { name: 'Perplexity AI', use: 'موتور جستجوی فنی برای کدهای خطای دیاگ خودرو، ارور پکیج و پارت‌نامبر قطعات', url: 'https://www.perplexity.ai' },
+                    { name: 'Formula Bot', use: 'تبدیل توضیحات فارسی به فرمول‌های پیچیده اکسل و ماکروهای حسابداری', url: 'https://formulabot.com' },
+                    { name: 'Julius AI', use: 'تحلیل فایل‌های اکسل فروش، انبارگردانی، کاست‌کنترل رستوران و متره ساختمان', url: 'https://julius.ai' },
+                    { name: 'Circuit Route Planner', use: 'چیدمان بهینه ترتیب ۱۰ تا ۲۰ آدرس روی نقشه برای پیک موتوری و پخش مویرگی', url: 'https://getcircuit.com' },
+                    { name: 'Gamma.app', use: 'ساخت خودکار پاورپوینت، اسلاید درسی و فایل PDF برنامه تمرینی در ۶۰ ثانیه', url: 'https://gamma.app' },
+                    { name: 'NotebookLM', use: 'بارگذاری فایل‌های PDF قوانین، پرونده‌ها و جزوات برای خلاصه‌سازی و پرسش‌وپاسخ', url: 'https://notebooklm.google' }
+                ]
+            }
+        ];
+
+        // State Variables
+        let activeCategory = 'all';
+        let activeSector = 'all'; // 'all' | 'آنلاین' | 'فیزیکی' | 'هیبریدی'
+        let searchQuery = '';
+        let viewMode = 'grid'; // 'grid' | 'table' | 'tools'
+
+        // Initialize Dashboard
+        function initDashboard() {
+            renderCategories();
+            renderJobs();
+            renderAiDirectory();
+            setupEventListeners();
+            lucide.createIcons();
+        }
+
+        // Render Sidebar Categories
+        function renderCategories() {
+            const container = document.getElementById('category-list');
+            container.innerHTML = '';
+
+            categories.forEach(cat => {
+                const count = cat.id === 'all' 
+                    ? jobsData.length 
+                    : jobsData.filter(j => j.categoryId === cat.id).length;
+
+                const isActive = activeCategory === cat.id;
+
+                const btn = document.createElement('button');
+                btn.className = `flex items-center justify-between gap-2 px-3 py-2.5 rounded-xl text-xs font-bold transition-all shrink-0 lg:w-full border ${
+                    isActive 
+                        ? 'active-category shadow-xs' 
+                        : 'bg-white text-slate-700 border-transparent hover:bg-slate-50 hover:border-slate-200'
+                }`;
+                btn.onclick = () => selectCategory(cat.id);
+
+                btn.innerHTML = `
+                    <div class="flex items-center gap-2 truncate">
+                        <i data-lucide="${cat.icon}" class="w-4 h-4 text-slate-500 shrink-0"></i>
+                        <span class="truncate">${cat.title}</span>
+                    </div>
+                    <span class="cat-count text-[11px] font-extrabold px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 shrink-0">${toPersianNum(count)}</span>
+                `;
+                container.appendChild(btn);
+            });
+        }
+
+        // Filter Jobs
+        function getFilteredJobs() {
+            return jobsData.filter(job => {
+                const matchesCategory = activeCategory === 'all' || job.categoryId === activeCategory;
+                const matchesSector = activeSector === 'all' || job.sector === activeSector;
+                
+                if (!searchQuery.trim()) {
+                    return matchesCategory && matchesSector;
+                }
+
+                const q = searchQuery.toLowerCase().trim();
+                const inTitle = job.title.toLowerCase().includes(q);
+                const inCat = job.categoryName.toLowerCase().includes(q);
+                const inUseCase = job.useCase.toLowerCase().includes(q);
+                const inTools = job.tools.some(t => 
+                    t.name.toLowerCase().includes(q) || 
+                    t.desc.toLowerCase().includes(q)
+                );
+
+                return matchesCategory && matchesSector && (inTitle || inCat || inUseCase || inTools);
+            });
+        }
+
+        // Badge Styling based on Sector Type
+        function getSectorBadge(sector) {
+            if (sector === 'آنلاین') {
+                return `<span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-slate-900 text-white">آنلاین</span>`;
+            } else if (sector === 'فیزیکی') {
+                return `<span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-slate-200 text-slate-800">صنف فیزیکی / کاسب</span>`;
+            } else {
+                return `<span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 border border-slate-300">ترکیبی (هیبریدی)</span>`;
+            }
+        }
+
+        // Render Jobs (Grid & Table)
+        function renderJobs() {
+            const filtered = getFilteredJobs();
+            const gridContainer = document.getElementById('jobs-grid');
+            const tableBody = document.getElementById('jobs-table-body');
+            const emptyState = document.getElementById('empty-state');
+            const tableWrapper = document.getElementById('jobs-table-wrapper');
+            const aiDirWrapper = document.getElementById('ai-directory-wrapper');
+            const statusBar = document.getElementById('status-bar');
+
+            // Update count & active title
+            document.getElementById('visible-count').textContent = toPersianNum(filtered.length);
+            const currentCatObj = categories.find(c => c.id === activeCategory);
+            document.getElementById('active-category-title').textContent = currentCatObj ? currentCatObj.title : 'همه رسته‌های شغلی';
+
+            // Reset button visibility
+            const resetBtn = document.getElementById('reset-filters-btn');
+            if (activeCategory !== 'all' || activeSector !== 'all' || searchQuery.trim() !== '') {
+                resetBtn.classList.remove('hidden');
+            } else {
+                resetBtn.classList.add('hidden');
+            }
+
+            // View Mode Routing
+            if (viewMode === 'tools') {
+                gridContainer.classList.add('hidden');
+                tableWrapper.classList.add('hidden');
+                emptyState.classList.add('hidden');
+                statusBar.classList.add('hidden');
+                aiDirWrapper.classList.remove('hidden');
+                lucide.createIcons();
+                return;
+            } else {
+                aiDirWrapper.classList.add('hidden');
+                statusBar.classList.remove('hidden');
+            }
+
+            if (filtered.length === 0) {
+                gridContainer.classList.add('hidden');
+                tableWrapper.classList.add('hidden');
+                emptyState.classList.remove('hidden');
+                lucide.createIcons();
+                return;
+            } else {
+                emptyState.classList.add('hidden');
+                if (viewMode === 'grid') {
+                    gridContainer.classList.remove('hidden');
+                    tableWrapper.classList.add('hidden');
+                } else {
+                    gridContainer.classList.add('hidden');
+                    tableWrapper.classList.remove('hidden');
+                }
+            }
+
+            // 1. Render Cards
+            gridContainer.innerHTML = filtered.map(job => `
+                <article class="bg-white border border-slate-200 rounded-2xl p-5 flex flex-col justify-between argon-card">
+                    <div>
+                        <!-- Card Header Meta -->
+                        <div class="flex items-center justify-between gap-2 mb-3">
+                            <span class="inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1 rounded-lg bg-slate-100 text-slate-700 border border-slate-200">
+                                <span class="text-slate-400">#${toPersianNum(job.id)}</span>
+                                <span>${job.categoryName}</span>
+                            </span>
+                            ${getSectorBadge(job.sector)}
+                        </div>
+
+                        <!-- Job Title -->
+                        <h2 class="text-base font-extrabold text-slate-900 mb-2.5 leading-snug">
+                            ${job.title}
+                        </h2>
+
+                        <!-- Use Case Box -->
+                        <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-3 mb-4">
+                            <div class="text-[11px] font-extrabold text-slate-800 mb-1 flex items-center gap-1.5">
+                                <i data-lucide="sparkles" class="w-3.5 h-3.5 text-slate-700"></i>
+                                <span>کاربرد عملیاتی هوش مصنوعی:</span>
+                            </div>
+                            <p class="text-xs text-slate-600 leading-relaxed">${job.useCase}</p>
+                        </div>
+
+                        <!-- 3-5 Free Specialized AI Tools -->
+                        <div class="mb-4">
+                            <div class="text-[11px] font-bold text-slate-500 mb-2 flex items-center justify-between">
+                                <span>ابزارهای تخصصی رایگان (${toPersianNum(job.tools.length)} ابزار معرفی‌شده):</span>
+                                <span class="text-[10px] text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200 font-semibold">دارای پلن رایگان</span>
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                ${job.tools.map(t => `
+                                    <a href="${t.url}" target="_blank" rel="noopener noreferrer" class="tool-chip flex flex-col justify-between p-2.5 rounded-xl bg-white border border-slate-200 shadow-2xs">
+                                        <div class="flex items-center justify-between gap-1 mb-0.5">
+                                            <span class="text-xs font-extrabold tracking-tight" dir="ltr">${t.name}</span>
+                                            <i data-lucide="arrow-up-left" class="tool-icon w-3.5 h-3.5 text-slate-400 shrink-0"></i>
+                                        </div>
+                                        <span class="tool-desc text-[11px] text-slate-500 line-clamp-1">${t.desc}</span>
+                                    </a>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card Footer Actions -->
+                    <div class="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+                        <button 
+                            onclick="openPromptModal(${job.id})" 
+                            class="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold transition-all"
+                        >
+                            <i data-lucide="terminal" class="w-3.5 h-3.5"></i>
+                            <span>مشاهده پرامپت تخصصی</span>
+                        </button>
+                        <button 
+                            onclick="copyPromptById(${job.id})" 
+                            class="shrink-0 inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-all"
+                            title="کپی سریع پرامپت"
+                        >
+                            <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                            <span>کپی پرامپت</span>
+                        </button>
+                    </div>
+                </article>
+            `).join('');
+
+            // 2. Render Table Rows
+            tableBody.innerHTML = filtered.map(job => `
+                <tr class="hover:bg-slate-50 transition-colors">
+                    <td class="py-3.5 px-3 text-center font-extrabold text-slate-400 align-top">${toPersianNum(job.id)}</td>
+                    <td class="py-3.5 px-4 align-top">
+                        <div class="font-extrabold text-slate-900 text-xs sm:text-sm">${job.title}</div>
+                    </td>
+                    <td class="py-3.5 px-3 align-top space-y-1">
+                        <div class="text-[11px] font-bold text-slate-700">${job.categoryName}</div>
+                        <div>${getSectorBadge(job.sector)}</div>
+                    </td>
+                    <td class="py-3.5 px-4 align-top text-xs text-slate-600 leading-relaxed max-w-md">
+                        ${job.useCase}
+                    </td>
+                    <td class="py-3.5 px-4 align-top">
+                        <div class="flex flex-wrap gap-1.5">
+                            ${job.tools.map(t => `
+                                <a href="${t.url}" target="_blank" rel="noopener noreferrer" title="${t.desc}" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-900 text-slate-800 hover:text-white border border-slate-200 text-xs font-bold transition-all" dir="ltr">
+                                    <span>${t.name}</span>
+                                    <i data-lucide="external-link" class="w-3 h-3 opacity-70"></i>
+                                </a>
+                            `).join('')}
+                        </div>
+                    </td>
+                    <td class="py-3.5 px-3 align-top text-center">
+                        <button 
+                            onclick="openPromptModal(${job.id})" 
+                            class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-700 text-white text-xs font-bold transition-all"
+                        >
+                            <i data-lucide="terminal" class="w-3.5 h-3.5"></i>
+                            <span>پرامپت</span>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+
+            lucide.createIcons();
+        }
+
+        // Render AI Directory Tab (3rd View Mode)
+        function renderAiDirectory() {
+            const container = document.getElementById('ai-directory-wrapper');
+            container.innerHTML = aiDirectoryCategories.map(group => `
+                <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs">
+                    <div class="border-b border-slate-100 pb-3 mb-4">
+                        <h3 class="text-base font-extrabold text-slate-900">${group.title}</h3>
+                        <p class="text-xs text-slate-500 mt-0.5">${group.subtitle}</p>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                        ${group.tools.map(t => `
+                            <a href="${t.url}" target="_blank" rel="noopener noreferrer" class="group p-3.5 rounded-xl border border-slate-200 hover:border-slate-900 bg-slate-50/60 hover:bg-white transition-all flex flex-col justify-between">
+                                <div class="flex items-center justify-between gap-2 mb-1.5">
+                                    <span class="text-sm font-extrabold text-slate-900 group-hover:underline" dir="ltr">${t.name}</span>
+                                    <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">رایگان</span>
+                                </div>
+                                <p class="text-xs text-slate-600 leading-relaxed">${t.use}</p>
+                            </a>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Select Category
+        function selectCategory(catId) {
+            activeCategory = catId;
+            if (viewMode === 'tools') {
+                setViewMode('grid');
+            } else {
+                renderCategories();
+                renderJobs();
+            }
+        }
+
+        // Select Sector Type (Online / Physical / Hybrid)
+        function setSectorType(sector) {
+            activeSector = sector;
+            const ids = {
+                'all': 'sector-all',
+                'آنلاین': 'sector-online',
+                'فیزیکی': 'sector-physical',
+                'هیبریدی': 'sector-hybrid'
+            };
+            Object.keys(ids).forEach(k => {
+                const el = document.getElementById(ids[k]);
+                if (k === sector) {
+                    el.className = 'px-2.5 py-1.5 rounded-lg text-xs font-bold bg-slate-900 text-white transition-all shrink-0';
+                } else {
+                    el.className = 'px-2.5 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 transition-all shrink-0';
+                }
+            });
+            if (viewMode === 'tools') setViewMode('grid');
+            renderJobs();
+        }
+
+        // Set View Mode ('grid' | 'table' | 'tools')
+        function setViewMode(mode) {
+            viewMode = mode;
+            const buttons = {
+                'grid': document.getElementById('btn-grid-view'),
+                'table': document.getElementById('btn-table-view'),
+                'tools': document.getElementById('btn-tools-view')
+            };
+            Object.keys(buttons).forEach(k => {
+                if (k === mode) {
+                    buttons[k].className = 'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-white text-slate-900 shadow-xs transition-all';
+                } else {
+                    buttons[k].className = 'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 transition-all';
+                }
+            });
+            renderCategories();
+            renderJobs();
+        }
+
+        // Open Prompt Modal
+        function openPromptModal(jobId) {
+            const job = jobsData.find(j => j.id === jobId);
+            if (!job) return;
+
+            document.getElementById('modal-category').textContent = `${job.categoryName} • ${job.sector}`;
+            document.getElementById('modal-title').textContent = job.title;
+            document.getElementById('modal-prompt-text').textContent = job.prompt;
+
+            const toolsList = document.getElementById('modal-tools-list');
+            toolsList.innerHTML = job.tools.map(t => `
+                <a href="${t.url}" target="_blank" rel="noopener noreferrer" class="flex items-center justify-between p-2.5 rounded-xl border border-slate-200 hover:border-slate-900 bg-white text-xs transition-all">
+                    <div>
+                        <div class="font-extrabold text-slate-900" dir="ltr">${t.name}</div>
+                        <div class="text-[11px] text-slate-500">${t.desc}</div>
+                    </div>
+                    <i data-lucide="external-link" class="w-4 h-4 text-slate-400 shrink-0"></i>
+                </a>
+            `).join('');
+
+            const copyBtn = document.getElementById('modal-copy-btn');
+            copyBtn.onclick = () => copyPromptById(job.id);
+
+            const modal = document.getElementById('prompt-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            lucide.createIcons();
+        }
+
+        function closePromptModal() {
+            const modal = document.getElementById('prompt-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        // Copy Prompt to Clipboard
+        function copyPromptById(jobId) {
+            const job = jobsData.find(j => j.id === jobId);
+            if (!job) return;
+
+            const tempInput = document.createElement('textarea');
+            tempInput.value = job.prompt;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+
+            showToast(`پرامپت تخصصی «${job.title}» کپی شد!`);
+        }
+
+        // Reset All Filters
+        function resetAllFilters() {
+            activeCategory = 'all';
+            searchQuery = '';
+            document.getElementById('search-input').value = '';
+            document.getElementById('clear-search').classList.add('hidden');
+            setSectorType('all');
+            setViewMode('grid');
+        }
+
+        // Toast Helper
+        let toastTimeout;
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-message').textContent = message;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        // Event Listeners
+        function setupEventListeners() {
+            const searchInput = document.getElementById('search-input');
+            const clearBtn = document.getElementById('clear-search');
+
+            searchInput.addEventListener('input', (e) => {
+                searchQuery = e.target.value;
+                if (searchQuery.trim().length > 0) {
+                    clearBtn.classList.remove('hidden');
+                    if (viewMode === 'tools') setViewMode('grid');
+                } else {
+                    clearBtn.classList.add('hidden');
+                }
+                renderJobs();
+            });
+
+            clearBtn.addEventListener('click', () => {
+                searchInput.value = '';
+                searchQuery = '';
+                clearBtn.classList.add('hidden');
+                renderJobs();
+                searchInput.focus();
+            });
+
+            // Close modal on backdrop click or Escape
+            document.getElementById('prompt-modal').addEventListener('click', (e) => {
+                if (e.target.id === 'prompt-modal') closePromptModal();
+            });
+            window.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') closePromptModal();
+            });
+        }
+
+        // Convert numbers to Persian digits
+        function toPersianNum(num) {
+            const persianDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+            return String(num).replace(/\d/g, x => persianDigits[x]);
+        }
+
+        window.onload = initDashboard;
+    </script>
+</body>
+</html>
